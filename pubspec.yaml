@@ -1,0 +1,161 @@
+name: pets_social
+description: "A social media for pets!"
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0'
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+  cached_network_image: ^3.2.3
+  carousel_slider: ^4.2.1
+  video_player: ^2.8.2
+  cloud_firestore: ^4.8.4
+  easy_localization: ^3.0.3
+  fake_cloud_firestore: ^2.4.8
+  feedback: ^3.0.0
+  firebase_analytics: ^10.5.1
+  firebase_auth: ^4.7.2
+  firebase_auth_mocks: ^0.13.0
+  firebase_core: ^2.16.0
+  firebase_messaging: ^14.6.7
+  firebase_storage: ^11.2.5
+  firebase_storage_mocks: ^0.6.1
+  flutter_local_notifications: ^16.2.0
+  flutter_riverpod: ^2.4.9
+  flutter_staggered_grid_view: ^0.7.0
+  flutter_svg: ^2.0.7
+  focus_detector: ^2.0.1
+  fpdart: ^1.1.0
+  go_router: ^13.2.0
+  googleapis_auth: ^1.4.1
+  http: ^1.1.0
+  image_picker: ^1.0.1
+  intl: ^0.18.0
+  liquid_pull_to_refresh: ^3.0.1
+  mockito: ^5.4.4
+  mocktail: ^1.0.3
+  path: ^1.8.3
+  permission_handler: ^11.1.0
+  regex_router: ^2.0.2
+  riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+  scroll_snap_list: ^0.9.1
+  scrollable_positioned_list: ^0.3.8
+  share_plus: ^7.1.0
+  shared_preferences: ^2.2.2
+  shimmer: ^3.0.0
+  smooth_page_indicator: ^1.1.0
+  timeago: ^3.6.0
+  uuid: ^4.2.2
+  video_thumbnail: ^0.5.3
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.7
+  custom_lint: ^0.6.2
+  riverpod_generator: ^2.3.9
+  riverpod_lint: ^2.3.7
+  test: ^1.24.9
+  integration_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^3.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/logo.png
+    - assets/images/default_pic.jpg
+    - assets/images/bone_border.png
+    - assets/images/bone.png
+    - assets/images/fish_border.png
+    - assets/images/fish.png
+    - assets/images/comment.png
+    - assets/images/like_border.png
+    - assets/images/like.png
+    - assets/images/cat_id.png
+    - assets/images/logo_pets_social.png
+    - assets/images/artboard_1.png
+    - assets/images/artboard_2.png
+    - assets/images/artboard_3.png
+    - assets/l10n/en-GB.json
+    - assets/l10n/de-DE.json
+    - assets/l10n/es-ES.json
+    - assets/l10n/ko-KR.json
+    - assets/l10n/pt-PT.json
+    - assets/l10n/ru-RU.json
+    - assets/l10n/zh-CN.json
+    - assets/images/cat_ghost_border.png
+    - assets/images/cat_ghost.png
+    - assets/images/lock.png
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: Lemon
+      fonts:
+        - asset: assets/fonts/Lemon-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages

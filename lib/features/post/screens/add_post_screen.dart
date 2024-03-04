@@ -1,0 +1,261 @@
+import 'dart:typed_data';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pets_social/core/utils/extensions.dart';
+import 'package:pets_social/core/utils/language.g.dart';
+import 'package:pets_social/features/post/controller/post_controller.dart';
+import 'package:pets_social/features/profile/controller/profile_controller.dart';
+import 'package:pets_social/models/profile.dart';
+import 'package:pets_social/responsive/responsive_layout_screen.dart';
+import 'package:pets_social/core/utils/utils.dart';
+import 'package:pets_social/router.dart';
+
+class AddPostScreen extends ConsumerStatefulWidget {
+  const AddPostScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _AddPostScreenState();
+}
+
+class _AddPostScreenState extends ConsumerState<AddPostScreen> {
+  Uint8List? _file;
+  String? _fileType;
+  Uint8List? _thumbnail;
+  String? _filePath;
+  final TextEditingController _descriptionController = TextEditingController();
+
+  //SELECT IMAGE
+  _selectImage(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text(LocaleKeys.createPost.tr()),
+            children: [
+              if (ResponsiveLayout.isMobile(context))
+                SimpleDialogOption(
+                  padding: const EdgeInsets.all(20),
+                  child: Text(LocaleKeys.takePhoto.tr()),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    Uint8List file;
+                    String fileType;
+                    Uint8List thumbnail;
+                    String filePath;
+                    (file, fileType, thumbnail, filePath) = await pickImage(
+                      ImageSource.camera,
+                    );
+                    setState(() {
+                      _file = file;
+                      _fileType = fileType;
+                      _thumbnail = thumbnail;
+                      _filePath = filePath;
+                    });
+                  },
+                ),
+              if (ResponsiveLayout.isMobile(context))
+                SimpleDialogOption(
+                  padding: const EdgeInsets.all(20),
+                  child: Text(LocaleKeys.takeVideo.tr()),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    Uint8List file;
+                    String fileType;
+                    Uint8List thumbnail;
+                    String filePath;
+                    (file, fileType, thumbnail, filePath) = await pickVideo(
+                      ImageSource.camera,
+                    );
+                    setState(() {
+                      _file = file;
+                      _fileType = fileType;
+                      _thumbnail = thumbnail;
+                      _filePath = filePath;
+                    });
+                  },
+                ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: Text(LocaleKeys.choosePhoto.tr()),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  Uint8List file;
+                  String fileType;
+                  Uint8List thumbnail;
+                  String filePath;
+                  (file, fileType, thumbnail, filePath) = await pickImage(
+                    ImageSource.gallery,
+                  );
+                  setState(() {
+                    _file = file;
+                    _fileType = fileType;
+                    _thumbnail = thumbnail;
+                    _filePath = filePath;
+                  });
+                },
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: Text(LocaleKeys.chooseVideo.tr()),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  Uint8List file;
+                  String fileType;
+                  Uint8List thumbnail;
+                  String filePath;
+                  (file, fileType, thumbnail, filePath) = await pickVideo(
+                    ImageSource.gallery,
+                  );
+                  setState(() {
+                    _file = file;
+                    _fileType = fileType;
+                    _thumbnail = thumbnail;
+                    _filePath = filePath;
+                  });
+                },
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: Text(LocaleKeys.cancel.tr()),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+//CLEAR IMAGE AFTER POSTING
+  void clearImage() {
+    setState(() {
+      _file = null;
+      _descriptionController.clear();
+    });
+    context.goNamed(AppRouter.feedScreen.name);
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ModelProfile? profile = ref.watch(userProvider);
+    final ThemeData theme = Theme.of(context);
+
+    ref.listen<AsyncValue>(
+      postControllerProvider,
+      (_, state) => state.showSnackbarOnError(context),
+    );
+    final AsyncValue<void> state = ref.watch(postControllerProvider);
+
+    return _file == null
+        ? Center(
+            child: IconButton(
+              icon: const Icon(Icons.upload),
+              iconSize: 50,
+              onPressed: () => _selectImage(context),
+            ),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              backgroundColor: theme.appBarTheme.backgroundColor,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: clearImage,
+              ),
+              title: Text(LocaleKeys.postTo.tr()),
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      await ref.read(postControllerProvider.notifier).uploadPost(
+                            FirebaseAuth.instance.currentUser!.uid,
+                            _descriptionController.text,
+                            _file!,
+                            profile!.profileUid,
+                            profile.username,
+                            profile.photoUrl ?? "",
+                            _fileType!,
+                            _thumbnail!,
+                          );
+                      clearImage();
+                    },
+                    child: Text(LocaleKeys.post.tr(),
+                        style: TextStyle(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        )))
+              ],
+            ),
+            body: SingleChildScrollView(
+              child: Column(children: [
+                state.isLoading
+                    ? LinearProgressIndicator(
+                        color: theme.colorScheme.secondary,
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.only(top: 0),
+                      ),
+                const Divider(),
+                SizedBox(
+                    child: _file!.isEmpty || _file![0] == 255
+                        ? Container(
+                            constraints: const BoxConstraints(maxHeight: 600),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.0),
+                                color: Colors.black,
+                                image: DecorationImage(
+                                  image: MemoryImage(_file!),
+                                  fit: BoxFit.cover,
+                                  alignment: FractionalOffset.topCenter,
+                                )),
+                          )
+                        : Container(
+                            constraints: const BoxConstraints(maxHeight: 600),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.0),
+                                color: Colors.black,
+                                image: DecorationImage(
+                                  image: MemoryImage(_thumbnail!),
+                                  fit: BoxFit.cover,
+                                  alignment: FractionalOffset.topCenter,
+                                )),
+                          )),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: (profile != null && profile.photoUrl != null) ? NetworkImage(profile.photoUrl!) : const AssetImage('assets/images/default_pic') as ImageProvider<Object>,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _descriptionController,
+                          decoration: InputDecoration(
+                            hintText: LocaleKeys.writeCaption.tr(),
+                            border: InputBorder.none,
+                          ),
+                          maxLines: 8,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ]),
+            ),
+          );
+  }
+}
