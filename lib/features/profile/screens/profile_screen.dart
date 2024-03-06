@@ -343,14 +343,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     initialValue: profile.username,
                     onChanged: ref.read(userProvider.notifier).updateUsername,
                     validator: (value) {
-                      String? validate = usernameValidator(value);
-                      if (validate != null) {
-                        return validate;
-                      }
                       final isAvailable = ref.watch(isUsernameAvailableProvider(value));
                       if (isAvailable.value == false) {
                         return 'Username not available';
                       }
+
+                      String? validate = usernameValidator(value);
+                      if (validate != null) {
+                        return validate;
+                      }
+
                       return null;
                     },
                   ),

@@ -58,6 +58,13 @@ Future<bool> isUsernameAvailable(IsUsernameAvailableRef ref, String? username) {
   return repository.isUsernameAvailable(username);
 }
 
+//IS USERNAME AVAILABLE
+@riverpod
+Future<bool> isEmailAvailable(IsEmailAvailableRef ref, String? email) {
+  final repository = ref.watch(profileRepositoryProvider);
+  return repository.isEmailAvailable(email);
+}
+
 //PROFILE PRIZE QUANTITY
 @riverpod
 Future<int> fetchProfilePrizeQuantity(FetchProfilePrizeQuantityRef ref, String profileUid, String prizeType) async {

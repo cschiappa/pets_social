@@ -22,7 +22,7 @@ final postRepositoryProvider = Provider<PostRepository>.internal(
 
 typedef PostRepositoryRef = ProviderRef<PostRepository>;
 String _$getPostsDescendingHash() =>
-    r'ebaf2d223c457c5e5d0ad1d595de776e83d04452';
+    r'5fa11a5247308ba2beba252475871a78c9df86d9';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -56,9 +56,11 @@ class GetPostsDescendingFamily extends Family<AsyncValue<List<ModelPost>>> {
 
   /// See also [getPostsDescending].
   GetPostsDescendingProvider call(
+    ModelAccount account,
     ModelProfile profile,
   ) {
     return GetPostsDescendingProvider(
+      account,
       profile,
     );
   }
@@ -68,6 +70,7 @@ class GetPostsDescendingFamily extends Family<AsyncValue<List<ModelPost>>> {
     covariant GetPostsDescendingProvider provider,
   ) {
     return call(
+      provider.account,
       provider.profile,
     );
   }
@@ -92,10 +95,12 @@ class GetPostsDescendingProvider
     extends AutoDisposeFutureProvider<List<ModelPost>> {
   /// See also [getPostsDescending].
   GetPostsDescendingProvider(
+    ModelAccount account,
     ModelProfile profile,
   ) : this._internal(
           (ref) => getPostsDescending(
             ref as GetPostsDescendingRef,
+            account,
             profile,
           ),
           from: getPostsDescendingProvider,
@@ -107,6 +112,7 @@ class GetPostsDescendingProvider
           dependencies: GetPostsDescendingFamily._dependencies,
           allTransitiveDependencies:
               GetPostsDescendingFamily._allTransitiveDependencies,
+          account: account,
           profile: profile,
         );
 
@@ -117,9 +123,11 @@ class GetPostsDescendingProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
+    required this.account,
     required this.profile,
   }) : super.internal();
 
+  final ModelAccount account;
   final ModelProfile profile;
 
   @override
@@ -135,6 +143,7 @@ class GetPostsDescendingProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
+        account: account,
         profile: profile,
       ),
     );
@@ -147,12 +156,15 @@ class GetPostsDescendingProvider
 
   @override
   bool operator ==(Object other) {
-    return other is GetPostsDescendingProvider && other.profile == profile;
+    return other is GetPostsDescendingProvider &&
+        other.account == account &&
+        other.profile == profile;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, account.hashCode);
     hash = _SystemHash.combine(hash, profile.hashCode);
 
     return _SystemHash.finish(hash);
@@ -160,6 +172,9 @@ class GetPostsDescendingProvider
 }
 
 mixin GetPostsDescendingRef on AutoDisposeFutureProviderRef<List<ModelPost>> {
+  /// The parameter `account` of this provider.
+  ModelAccount get account;
+
   /// The parameter `profile` of this provider.
   ModelProfile get profile;
 }
@@ -169,6 +184,8 @@ class _GetPostsDescendingProviderElement
     with GetPostsDescendingRef {
   _GetPostsDescendingProviderElement(super.provider);
 
+  @override
+  ModelAccount get account => (origin as GetPostsDescendingProvider).account;
   @override
   ModelProfile get profile => (origin as GetPostsDescendingProvider).profile;
 }
@@ -967,133 +984,6 @@ class _GetPostByIdProviderElement
 
   @override
   String get postId => (origin as GetPostByIdProvider).postId;
-}
-
-String _$getPrizeHash() => r'279907dd4594cc68a4a3a1b192e03882b8c6289a';
-
-/// See also [getPrize].
-@ProviderFor(getPrize)
-const getPrizeProvider = GetPrizeFamily();
-
-/// See also [getPrize].
-class GetPrizeFamily extends Family<AsyncValue<ModelPrize>> {
-  /// See also [getPrize].
-  const GetPrizeFamily();
-
-  /// See also [getPrize].
-  GetPrizeProvider call(
-    String prizeType,
-  ) {
-    return GetPrizeProvider(
-      prizeType,
-    );
-  }
-
-  @override
-  GetPrizeProvider getProviderOverride(
-    covariant GetPrizeProvider provider,
-  ) {
-    return call(
-      provider.prizeType,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'getPrizeProvider';
-}
-
-/// See also [getPrize].
-class GetPrizeProvider extends AutoDisposeFutureProvider<ModelPrize> {
-  /// See also [getPrize].
-  GetPrizeProvider(
-    String prizeType,
-  ) : this._internal(
-          (ref) => getPrize(
-            ref as GetPrizeRef,
-            prizeType,
-          ),
-          from: getPrizeProvider,
-          name: r'getPrizeProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getPrizeHash,
-          dependencies: GetPrizeFamily._dependencies,
-          allTransitiveDependencies: GetPrizeFamily._allTransitiveDependencies,
-          prizeType: prizeType,
-        );
-
-  GetPrizeProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.prizeType,
-  }) : super.internal();
-
-  final String prizeType;
-
-  @override
-  Override overrideWith(
-    FutureOr<ModelPrize> Function(GetPrizeRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GetPrizeProvider._internal(
-        (ref) => create(ref as GetPrizeRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        prizeType: prizeType,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<ModelPrize> createElement() {
-    return _GetPrizeProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is GetPrizeProvider && other.prizeType == prizeType;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, prizeType.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-mixin GetPrizeRef on AutoDisposeFutureProviderRef<ModelPrize> {
-  /// The parameter `prizeType` of this provider.
-  String get prizeType;
-}
-
-class _GetPrizeProviderElement
-    extends AutoDisposeFutureProviderElement<ModelPrize> with GetPrizeRef {
-  _GetPrizeProviderElement(super.provider);
-
-  @override
-  String get prizeType => (origin as GetPrizeProvider).prizeType;
 }
 
 String _$getPrizesHash() => r'817d2b37529b079087b2c2648ef09b3dd5fb2906';

@@ -39,6 +39,7 @@ class FeedScreen extends ConsumerStatefulWidget {
 
 class _FeedScreenState extends ConsumerState<FeedScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
+  final GlobalKey<FormState> formKeyTwo = GlobalKey();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;
@@ -288,123 +289,130 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final ThemeData theme = Theme.of(context);
     final selectedPetTag = ref.watch(selectedTagsProvider('petTag'));
     return CustomBottomSheet.show(context: context, listWidget: [
-      SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
+      StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+        return SingleChildScrollView(
+          child: Form(
+            key: formKeyTwo,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _image != null
-                    ? CircleAvatar(
-                        radius: 40,
-                        backgroundImage: MemoryImage(_image!),
-                      )
-                    : const CircleAvatar(radius: 40, backgroundImage: AssetImage('assets/images/default_pic.jpg')),
-                Positioned(
-                  top: 40,
-                  left: 40,
-                  child: IconButton(
-                    iconSize: 20,
-                    onPressed: () => selectImage(context, setState),
-                    icon: const Icon(
-                      Icons.add_a_photo,
+                Stack(
+                  children: [
+                    _image != null
+                        ? CircleAvatar(
+                            radius: 40,
+                            backgroundImage: MemoryImage(_image!),
+                          )
+                        : const CircleAvatar(radius: 40, backgroundImage: AssetImage('assets/images/default_pic.jpg')),
+                    Positioned(
+                      top: 40,
+                      left: 40,
+                      child: IconButton(
+                        iconSize: 20,
+                        onPressed: () => selectImage(context, setState),
+                        icon: const Icon(
+                          Icons.add_a_photo,
+                        ),
+                      ),
                     ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //USERNAME
+                TextFieldInput(
+                  labelText: LocaleKeys.username.tr(),
+                  textInputType: TextInputType.text,
+                  textEditingController: _usernameController,
+                  validator: (value) {
+                    final isAvailable = ref.watch(isUsernameAvailableProvider(value));
+                    if (isAvailable.value == false) {
+                      return 'Username not available';
+                    }
+
+                    String? validate = usernameValidator(value);
+                    if (validate != null) {
+                      return validate;
+                    }
+
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //BIO
+                TextFieldInput(
+                  labelText: LocaleKeys.bio.tr(),
+                  textInputType: TextInputType.text,
+                  textEditingController: _bioController,
+                  validator: bioValidator,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //SELECT PROFILE PET TAG
+                Text(LocaleKeys.petTagQuestion.tr(), style: theme.textTheme.titleMedium),
+                const SizedBox(
+                  height: 10,
+                ),
+                TagTextField(
+                  selectedTagsProvider: selectedTagsProvider('petTag'),
+                  helper: LocaleKeys.chooseOnlyOneTag.tr(),
+                  validator: emptyField,
+                  formKeyTwo: formKey,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                InkWell(
+                  onTap: () async {
+                    if (formKey.currentState!.validate() && formKeyTwo.currentState!.validate()) {
+                      await ref
+                          .read(profileControllerProvider.notifier)
+                          .createProfile(
+                            username: _usernameController.text,
+                            bio: _bioController.text,
+                            petTag: selectedPetTag,
+                            file: _image,
+                            uid: FirebaseAuth.instance.currentUser!.uid,
+                          )
+                          .then((value) {
+                        context.pop();
+                        _usernameController.clear();
+                        _bioController.clear();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(LocaleKeys.profileCreated.tr()),
+                          ),
+                        );
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: ShapeDecoration(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                        color: theme.colorScheme.secondary),
+                    child: state.isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: theme.colorScheme.secondary,
+                            ),
+                          )
+                        : Text(LocaleKeys.confirm.tr()),
                   ),
                 ),
               ],
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            //USERNAME
-            TextFieldInput(
-              labelText: LocaleKeys.username.tr(),
-              textInputType: TextInputType.text,
-              textEditingController: _usernameController,
-              validator: (value) {
-                String? validate = usernameValidator(value);
-                if (validate != null) {
-                  return validate;
-                }
-                final isAvailable = ref.watch(isUsernameAvailableProvider(value));
-                if (isAvailable.value == false) {
-                  return 'Username not available';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            //BIO
-            TextFieldInput(
-              labelText: LocaleKeys.bio.tr(),
-              textInputType: TextInputType.text,
-              textEditingController: _bioController,
-              validator: bioValidator,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            //SELECT PROFILE PET TAG
-            Text(LocaleKeys.petTagQuestion.tr(), style: theme.textTheme.titleMedium),
-            const SizedBox(
-              height: 10,
-            ),
-            TagTextField(
-              selectedTagsProvider: selectedTagsProvider('petTag'),
-              helper: LocaleKeys.chooseOnlyOneTag.tr(),
-              validator: emptyField,
-              formKeyTwo: formKey,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            InkWell(
-              onTap: () async {
-                if (formKey.currentState!.validate()) {
-                  await ref
-                      .read(profileControllerProvider.notifier)
-                      .createProfile(
-                        username: _usernameController.text,
-                        bio: _bioController.text,
-                        petTag: selectedPetTag,
-                        file: _image,
-                        uid: FirebaseAuth.instance.currentUser!.uid,
-                      )
-                      .then((value) {
-                    context.pop();
-                    _usernameController.clear();
-                    _bioController.clear();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(LocaleKeys.profileCreated.tr()),
-                      ),
-                    );
-                  });
-                }
-              },
-              child: Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: ShapeDecoration(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                    ),
-                    color: theme.colorScheme.secondary),
-                child: state.isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          color: theme.colorScheme.secondary,
-                        ),
-                      )
-                    : Text(LocaleKeys.confirm.tr()),
-              ),
-            ),
-          ],
-        ),
-      )
+          ),
+        );
+      })
     ]);
   }
 }

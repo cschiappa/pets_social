@@ -588,6 +588,134 @@ class _IsUsernameAvailableProviderElement
   String? get username => (origin as IsUsernameAvailableProvider).username;
 }
 
+String _$isEmailAvailableHash() => r'bc19dbbbc349f8ed3c7d2488c718e39f339297a9';
+
+/// See also [isEmailAvailable].
+@ProviderFor(isEmailAvailable)
+const isEmailAvailableProvider = IsEmailAvailableFamily();
+
+/// See also [isEmailAvailable].
+class IsEmailAvailableFamily extends Family<AsyncValue<bool>> {
+  /// See also [isEmailAvailable].
+  const IsEmailAvailableFamily();
+
+  /// See also [isEmailAvailable].
+  IsEmailAvailableProvider call(
+    String? email,
+  ) {
+    return IsEmailAvailableProvider(
+      email,
+    );
+  }
+
+  @override
+  IsEmailAvailableProvider getProviderOverride(
+    covariant IsEmailAvailableProvider provider,
+  ) {
+    return call(
+      provider.email,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'isEmailAvailableProvider';
+}
+
+/// See also [isEmailAvailable].
+class IsEmailAvailableProvider extends AutoDisposeFutureProvider<bool> {
+  /// See also [isEmailAvailable].
+  IsEmailAvailableProvider(
+    String? email,
+  ) : this._internal(
+          (ref) => isEmailAvailable(
+            ref as IsEmailAvailableRef,
+            email,
+          ),
+          from: isEmailAvailableProvider,
+          name: r'isEmailAvailableProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$isEmailAvailableHash,
+          dependencies: IsEmailAvailableFamily._dependencies,
+          allTransitiveDependencies:
+              IsEmailAvailableFamily._allTransitiveDependencies,
+          email: email,
+        );
+
+  IsEmailAvailableProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.email,
+  }) : super.internal();
+
+  final String? email;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(IsEmailAvailableRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: IsEmailAvailableProvider._internal(
+        (ref) => create(ref as IsEmailAvailableRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        email: email,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _IsEmailAvailableProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is IsEmailAvailableProvider && other.email == email;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, email.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin IsEmailAvailableRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `email` of this provider.
+  String? get email;
+}
+
+class _IsEmailAvailableProviderElement
+    extends AutoDisposeFutureProviderElement<bool> with IsEmailAvailableRef {
+  _IsEmailAvailableProviderElement(super.provider);
+
+  @override
+  String? get email => (origin as IsEmailAvailableProvider).email;
+}
+
 String _$fetchProfilePrizeQuantityHash() =>
     r'eb26f4ede1ebbf5b54fa7b90bd522f4cbf2b3ce4';
 

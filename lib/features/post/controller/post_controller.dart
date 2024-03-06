@@ -7,6 +7,7 @@ import 'package:pets_social/core/providers/storage_methods.dart';
 import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/features/notification/controller/notification_controller.dart';
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
+import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/comment.dart';
 import 'package:pets_social/models/post.dart';
 import 'package:pets_social/models/prize.dart';
@@ -33,9 +34,9 @@ final showDescriptionProvider = StateProvider<bool>((ref) => false);
 
 //GET ALL POSTS IN DESCENDING
 @riverpod
-Future<List<ModelPost>> getPostsDescending(GetPostsDescendingRef ref, ModelProfile profile) {
+Future<List<ModelPost>> getPostsDescending(GetPostsDescendingRef ref, ModelAccount account, ModelProfile profile) {
   final repository = ref.watch(postRepositoryProvider);
-  return repository.getPostsDescending(profile);
+  return repository.getPostsDescending(account, profile);
 }
 
 //GET FEED POSTS
@@ -85,13 +86,6 @@ Future<List<ModelPrize>> getPrizesFromPost(GetPrizesFromPostRef ref, String post
 Stream<ModelPost> getPostById(GetPostByIdRef ref, String postId) {
   final repository = ref.watch(postRepositoryProvider);
   return repository.getPostById(postId);
-}
-
-//GET PRIZE
-@riverpod
-Future<ModelPrize> getPrize(GetPrizeRef ref, String prizeType) async {
-  final repository = ref.watch(postRepositoryProvider);
-  return repository.getPrize(prizeType);
 }
 
 //GET PRIZES COLLECTION

@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pets_social/core/utils/language.g.dart';
+import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/comment.dart';
 import 'package:pets_social/models/feedback.dart';
 import 'package:pets_social/features/notification/repository/notification_repository.dart';
@@ -110,12 +111,6 @@ class PostRepository {
         await userCollection.collection('purchasedPrizes').doc(prizeType).delete();
       }
     }
-  }
-
-  Future<ModelPrize> getPrize(String prizeType) async {
-    DocumentSnapshot prizeDocument = await _firestore.collection('prizes').doc(prizeType).get();
-
-    return ModelPrize.fromSnap(prizeDocument);
   }
 
   Future<List<ModelPrize>> getPrizes() async {
@@ -282,11 +277,37 @@ class PostRepository {
         );
   }
 
-  //GET ALL POSTS DESCENDING
-  Future<List<ModelPost>> getPostsDescending(ModelProfile profile) async {
+  // //GET ALL POSTS DESCENDING
+  // Future<List<ModelPost>> getPostsDescending(ModelProfile profile) async {
+  //   QuerySnapshot querySnapshot = await _firestore.collection('posts').orderBy('datePublished', descending: true).get();
+
+  //   return querySnapshot.docs.where((doc) => !profile.blockedUsers.contains(doc['profileUid'])).map((doc) => ModelPost.fromSnap(doc)).toList();
+  // }
+
+  //GET SEARCH POSTS (NO BLOCKED PROFILES/NO BLOCKED TAGS)
+  Future<List<ModelPost>> getPostsDescending(ModelAccount user, ModelProfile profile) async {
+    // Step 1: Retrieve the list of blocked tags
+    List blockedTags = user.blockedTags;
+
+    // Step 2: Fetch profilesCollection
+    QuerySnapshot profilesSnapshot = await _firestore.collectionGroup('profiles').get();
+    List<ModelProfile> profiles = profilesSnapshot.docs.map((doc) => ModelProfile.fromSnap(doc)).toList();
+
+    // Step 3: Fetch posts and filter based on blocked tags
     QuerySnapshot querySnapshot = await _firestore.collection('posts').orderBy('datePublished', descending: true).get();
 
-    return querySnapshot.docs.where((doc) => !profile.blockedUsers.contains(doc['profileUid'])).map((doc) => ModelPost.fromSnap(doc)).toList();
+    List<ModelPost> filteredPosts = querySnapshot.docs.map((postDoc) => ModelPost.fromSnap(postDoc)).where((post) {
+      // Check if post.profileUid matches any profiles.profileUid
+      bool isProfileMatch = profiles.any((profile) =>
+              profile.profileUid == post.profileUid &&
+              // Check if the corresponding profile's tag is not in blockedTags
+              !blockedTags.any((blockedTag) => profile.petTag.contains(blockedTag))) &&
+          !profile.blockedUsers.contains(post.profileUid);
+
+      return isProfileMatch;
+    }).toList();
+
+    return filteredPosts;
   }
 
   //GET FEED POSTS

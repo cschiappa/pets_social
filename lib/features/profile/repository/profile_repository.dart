@@ -202,6 +202,13 @@ class ProfileRepository {
     return query.docs.isEmpty;
   }
 
+  //EMAIL AVAILABLE
+  Future<bool> isEmailAvailable(String? email) async {
+    final query = await _firestore.collectionGroup('profiles').where('email', isEqualTo: email).get();
+
+    return query.docs.isEmpty;
+  }
+
   //FETCH PROFILE PRIZES QUANTITY
   Future<int> fetchProfilePrizeQuantity(String profileUid, String prizeType) async {
     QuerySnapshot postsQuery = await _firestore.collection('posts').where('profileUid', isEqualTo: profileUid).get();

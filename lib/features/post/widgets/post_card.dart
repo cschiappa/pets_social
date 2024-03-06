@@ -102,11 +102,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                     //DOUBLE TAP FOR LIKE
                     GestureDetector(
                       onDoubleTap: () async {
-                        final likePrize = ref.watch(getPrizeProvider('like')).value!;
-                        //await ref.read(postControllerProvider.notifier).likePost(widget.post.postId, profile.profileUid, widget.post.likes);
-
-                        await ref.read(postControllerProvider.notifier).givePrize(widget.post.postId, profile.profileUid, likePrize.type, LocaleKeys.gavePrize.tr());
-
+                        await ref.read(postControllerProvider.notifier).givePrize(widget.post.postId, profile.profileUid, 'like', LocaleKeys.gavePrize.tr());
                         setState(() {
                           isLikeAnimating = true;
                         });

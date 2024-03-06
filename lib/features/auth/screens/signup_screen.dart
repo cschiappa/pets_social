@@ -116,14 +116,15 @@ class _SignupScreenState extends ConsumerState<ConsumerStatefulWidget> {
                       textInputType: TextInputType.text,
                       textEditingController: _usernameController,
                       validator: (value) {
-                        String? validate = usernameValidator(value);
-                        if (validate != null) {
-                          return validate;
-                        }
                         final isAvailable = ref.watch(isUsernameAvailableProvider(value));
                         if (isAvailable.value == false) {
                           return 'Username not available';
                         }
+                        String? validate = usernameValidator(value);
+                        if (validate != null) {
+                          return validate;
+                        }
+
                         return null;
                       },
                     ),
@@ -135,7 +136,18 @@ class _SignupScreenState extends ConsumerState<ConsumerStatefulWidget> {
                       labelText: LocaleKeys.email.tr(),
                       textInputType: TextInputType.emailAddress,
                       textEditingController: _emailController,
-                      validator: emailValidator,
+                      validator: (value) {
+                        final isAvailable = ref.watch(isEmailAvailableProvider(value));
+                        if (isAvailable.value == false) {
+                          return 'Email not available';
+                        }
+                        String? validate = emailValidator(value);
+                        if (validate != null) {
+                          return validate;
+                        }
+
+                        return null;
+                      },
                     ),
                     const SizedBox(
                       height: 24,

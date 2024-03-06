@@ -8,8 +8,10 @@ import 'package:pets_social/core/constants/constants.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
 import 'package:pets_social/core/widgets/liquid_pull_refresh.dart';
+import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
+import 'package:pets_social/models/account.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/models/profile.dart';
 
@@ -57,7 +59,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     ModelProfile profile = ref.watch(userProvider)!;
-    final postsState = ref.watch(getPostsDescendingProvider(profile));
+    ModelAccount account = ref.watch(accountProvider)!;
+    final postsState = ref.watch(getPostsDescendingProvider(account, profile));
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
