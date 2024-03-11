@@ -142,42 +142,37 @@ class _ChatListState extends ConsumerState<ChatList> {
         String message = lastMessages.isNotEmpty ? lastMessages[0]['message'] : '';
         String croppedMessage = cropMessage(message, 25);
 
-        if (profile.profileUid != data['profileUid']) {
-          return ListTile(
-            leading: CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
-            ),
-            title: hasUnreadMessages
-                ? Text(
-                    data['username'],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  )
-                : Text(data['username']),
-            subtitle: Text(
-              croppedMessage,
-              //style: hasUnreadMessages ? const TextStyle(fontWeight: FontWeight.bold) : null,
-            ),
-            trailing: hasUnreadMessages
-                ? Icon(
-                    Icons.fiber_manual_record,
-                    size: 20,
-                    color: theme.colorScheme.secondary,
-                  )
-                : null,
-            onTap: () {
-              context.goNamed(AppRouter.chatPage.name, pathParameters: {
-                'receiverUserEmail': data['email'],
-                'receiverProfileUid': data['profileUid'],
-                'receiverUsername': data['username'],
-                'receiverUserUid': data['uid'],
-              });
-            },
-          );
-        } else {
-          // Return empty container for the current user
-          return Container();
-        }
+        return ListTile(
+          leading: CircleAvatar(
+            radius: 20,
+            backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
+          ),
+          title: hasUnreadMessages
+              ? Text(
+                  data['username'],
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                )
+              : Text(data['username']),
+          subtitle: Text(
+            croppedMessage,
+            //style: hasUnreadMessages ? const TextStyle(fontWeight: FontWeight.bold) : null,
+          ),
+          trailing: hasUnreadMessages
+              ? Icon(
+                  Icons.fiber_manual_record,
+                  size: 20,
+                  color: theme.colorScheme.secondary,
+                )
+              : null,
+          onTap: () {
+            context.goNamed(AppRouter.chatPage.name, pathParameters: {
+              'receiverUserEmail': data['email'],
+              'receiverProfileUid': data['profileUid'],
+              'receiverUsername': data['username'],
+              'receiverUserUid': data['uid'],
+            });
+          },
+        );
       },
     );
   }

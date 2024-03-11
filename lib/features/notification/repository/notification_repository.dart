@@ -90,7 +90,7 @@ class NotificationRepository {
             _androidChannel.id,
             _androidChannel.name,
             channelDescription: _androidChannel.description,
-            // icon: '@drawable/ic_launcher',
+            icon: '@drawable/ic_launcher',
           ),
         ),
         payload: jsonEncode(message.toMap()),

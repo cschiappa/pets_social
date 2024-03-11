@@ -56,8 +56,8 @@ class _PetTagsSettingsState extends ConsumerState<ConsumerStatefulWidget> {
                   const SizedBox(
                     height: 10,
                   ),
-                  TagTextField(
-                    selectedTagsProvider: selectedTagsProvider('preferedTags'),
+                  const TagTextField(
+                    tag: 'preferedTags',
                   ),
                   const SizedBox(
                     height: 40,
@@ -67,8 +67,8 @@ class _PetTagsSettingsState extends ConsumerState<ConsumerStatefulWidget> {
                   const SizedBox(
                     height: 10,
                   ),
-                  TagTextField(
-                    selectedTagsProvider: selectedTagsProvider('blockedTags'),
+                  const TagTextField(
+                    tag: 'blockedTags',
                   ),
                   const SizedBox(
                     height: 40,

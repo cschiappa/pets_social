@@ -66,9 +66,11 @@ class _PrizesCarouselSliderState extends State<PrizesCarouselSlider> {
                       return prize.isPaid == true && userPrizes == null
                           ? InkWell(
                               onTap: () => context.goNamed(AppRouter.prizesScreen.name),
-                              child: Stack(children: [
+                              child: Stack(alignment: Alignment.center, children: [
                                 Image.network(prize.iconDeactivated),
-                                Image.asset('assets/images/lock.png'),
+                                const Text(
+                                  'Unlock',
+                                )
                               ]),
                             )
                           : PrizeAnimation(
@@ -93,7 +95,7 @@ class _PrizesCarouselSliderState extends State<PrizesCarouselSlider> {
                       viewportFraction: 0.4,
                       aspectRatio: 4,
                       enableInfiniteScroll: true,
-                      initialPage: 3,
+                      initialPage: 1,
                       enlargeCenterPage: true,
                       enlargeFactor: 0.5,
                       enlargeStrategy: CenterPageEnlargeStrategy.zoom,

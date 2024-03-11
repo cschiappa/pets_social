@@ -28,6 +28,12 @@ class PersonalDetailsPage extends ConsumerWidget {
             title: Text(LocaleKeys.username.tr()),
             subtitle: Text(profile.username),
           ),
+          //PET TAG
+          ListTile(
+            leading: const Icon(Icons.tag),
+            title: const Text('Pet Tag'),
+            subtitle: Text(profile.petTag.first),
+          ),
           //EMAIL
           ListTile(
             leading: const Icon(Icons.mail),

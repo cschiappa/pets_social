@@ -287,7 +287,7 @@ class _SignupScreenTwoState extends ConsumerState<ConsumerStatefulWidget> {
                     height: 10,
                   ),
                   TagTextField(
-                    selectedTagsProvider: selectedTagsProvider('petTag'),
+                    tag: 'petTag',
                     helper: LocaleKeys.chooseOnlyOneTag.tr(),
                     formKeyTwo: formKeyTwo,
                     validator: emptyField,
@@ -301,7 +301,7 @@ class _SignupScreenTwoState extends ConsumerState<ConsumerStatefulWidget> {
                     height: 10,
                   ),
                   TagTextField(
-                    selectedTagsProvider: selectedTagsProvider('preferedTags'),
+                    tag: 'preferedTags',
                     helper: LocaleKeys.canChangeLater.tr(),
                   ),
                   const SizedBox(
@@ -313,7 +313,7 @@ class _SignupScreenTwoState extends ConsumerState<ConsumerStatefulWidget> {
                     height: 10,
                   ),
                   TagTextField(
-                    selectedTagsProvider: selectedTagsProvider('blockedTags'),
+                    tag: 'blockedTags',
                     helper: LocaleKeys.canChangeLater.tr(),
                   ),
                   const SizedBox(

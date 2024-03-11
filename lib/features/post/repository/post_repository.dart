@@ -114,7 +114,7 @@ class PostRepository {
   }
 
   Future<List<ModelPrize>> getPrizes() async {
-    final querySnapshot = await _firestore.collection('prizes').get();
+    final querySnapshot = await _firestore.collection('prizes').orderBy('position').get();
 
     return querySnapshot.docs.map((doc) => ModelPrize.fromSnap(doc)).toList();
   }

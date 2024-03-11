@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
@@ -42,22 +43,17 @@ class _StorePrizeCardState extends ConsumerState<StorePrizeCard> {
           decoration: BoxDecoration(border: Border.all(color: Colors.white), borderRadius: BorderRadius.circular(20.0), color: Colors.black),
           child: Stack(
             children: [
-              Container(
-                alignment: Alignment.topCenter,
-                padding: const EdgeInsets.all(15),
-                child: Text(
-                  widget.title,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, fontFamily: 'Lemon'),
-                ),
-              ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: PageView(
-                  controller: _controller,
-                  children: [
-                    Image.network(widget.prizeDeactivated),
-                    Image.network(widget.prizeActivated),
-                  ],
+                padding: const EdgeInsets.all(10),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 25),
+                  child: PageView(
+                    controller: _controller,
+                    children: [
+                      Image.network(widget.prizeActivated),
+                      Image.network(widget.prizeDeactivated),
+                    ],
+                  ),
                 ),
               ),
               Column(
@@ -124,26 +120,27 @@ class _StorePrizeCardState extends ConsumerState<StorePrizeCard> {
                               child: PageView(
                                 controller: _controller,
                                 children: [
-                                  Image.network(widget.prizeDeactivated),
                                   Image.network(widget.prizeActivated),
+                                  Image.network(widget.prizeDeactivated),
                                 ],
                               ),
                             ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 45),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      SmoothPageIndicator(
-                                        controller: _controller,
-                                        count: 2,
-                                        effect: JumpingDotEffect(activeDotColor: theme.colorScheme.secondary, dotWidth: 10, dotHeight: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    SmoothPageIndicator(
+                                      controller: _controller,
+                                      count: 2,
+                                      effect: JumpingDotEffect(
+                                        activeDotColor: theme.colorScheme.secondary,
+                                        dotWidth: 10,
+                                        dotHeight: 10,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

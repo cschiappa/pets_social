@@ -337,25 +337,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     height: 20,
                   ),
                   //USERNAME
-                  TextFieldInput(
-                    labelText: LocaleKeys.username.tr(),
-                    textInputType: TextInputType.text,
-                    initialValue: profile.username,
-                    onChanged: ref.read(userProvider.notifier).updateUsername,
-                    validator: (value) {
-                      final isAvailable = ref.watch(isUsernameAvailableProvider(value));
-                      if (isAvailable.value == false) {
-                        return 'Username not available';
-                      }
+                  Consumer(builder: (context, ref, child) {
+                    return TextFieldInput(
+                      labelText: LocaleKeys.username.tr(),
+                      textInputType: TextInputType.text,
+                      initialValue: profile.username,
+                      onChanged: ref.read(userProvider.notifier).updateUsername,
+                      validator: (value) {
+                        final isAvailable = ref.watch(isUsernameAvailableProvider(value));
+                        if (isAvailable.value == false) {
+                          return 'Username not available';
+                        }
 
-                      String? validate = usernameValidator(value);
-                      if (validate != null) {
-                        return validate;
-                      }
+                        String? validate = usernameValidator(value);
+                        if (validate != null) {
+                          return validate;
+                        }
 
-                      return null;
-                    },
-                  ),
+                        return null;
+                      },
+                    );
+                  }),
                   const SizedBox(
                     height: 20,
                   ),

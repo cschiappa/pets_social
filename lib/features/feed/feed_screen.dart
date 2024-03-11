@@ -39,7 +39,6 @@ class FeedScreen extends ConsumerStatefulWidget {
 
 class _FeedScreenState extends ConsumerState<FeedScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
-  final GlobalKey<FormState> formKeyTwo = GlobalKey();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   Uint8List? _image;
@@ -212,16 +211,18 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
             _buildProfileList(),
             Expanded(
               child: Align(
-                alignment: Alignment.bottomCenter,
-                child: ListTile(
-                  tileColor: Colors.grey[500],
-                  title: Text(LocaleKeys.addNewProfile.tr()),
-                  trailing: const Icon(Icons.person_add),
-                  onTap: () {
-                    _profileBottomSheet(context, state);
-                  },
-                ),
-              ),
+                  alignment: Alignment.bottomCenter,
+                  child: StatefulBuilder(builder: (context, setState) {
+                    //print(selectedPetTag);
+                    return ListTile(
+                      tileColor: Colors.grey[500],
+                      title: Text(LocaleKeys.addNewProfile.tr()),
+                      trailing: const Icon(Icons.person_add),
+                      onTap: () {
+                        return _profileBottomSheet(context, state);
+                      },
+                    );
+                  })),
             )
           ],
         ),
@@ -285,43 +286,46 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   //CREATE PROFILE BOTTOM SHEET
-  void _profileBottomSheet(BuildContext context, AsyncValue<void> state) {
+  void _profileBottomSheet(BuildContext context, state) {
     final ThemeData theme = Theme.of(context);
     final selectedPetTag = ref.watch(selectedTagsProvider('petTag'));
+
+    final GlobalKey<FormState> formKeyTwo = GlobalKey();
+
     return CustomBottomSheet.show(context: context, listWidget: [
-      StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-        return SingleChildScrollView(
-          child: Form(
-            key: formKeyTwo,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Stack(
-                  children: [
-                    _image != null
-                        ? CircleAvatar(
-                            radius: 40,
-                            backgroundImage: MemoryImage(_image!),
-                          )
-                        : const CircleAvatar(radius: 40, backgroundImage: AssetImage('assets/images/default_pic.jpg')),
-                    Positioned(
-                      top: 40,
-                      left: 40,
-                      child: IconButton(
-                        iconSize: 20,
-                        onPressed: () => selectImage(context, setState),
-                        icon: const Icon(
-                          Icons.add_a_photo,
-                        ),
+      Form(
+        key: formKeyTwo,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                children: [
+                  _image != null
+                      ? CircleAvatar(
+                          radius: 40,
+                          backgroundImage: MemoryImage(_image!),
+                        )
+                      : const CircleAvatar(radius: 40, backgroundImage: AssetImage('assets/images/default_pic.jpg')),
+                  Positioned(
+                    top: 40,
+                    left: 40,
+                    child: IconButton(
+                      iconSize: 20,
+                      onPressed: () => selectImage(context, setState),
+                      icon: const Icon(
+                        Icons.add_a_photo,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //USERNAME
-                TextFieldInput(
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              //USERNAME
+              Consumer(builder: (context, ref, child) {
+                return TextFieldInput(
                   labelText: LocaleKeys.username.tr(),
                   textInputType: TextInputType.text,
                   textEditingController: _usernameController,
@@ -338,81 +342,84 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
                     return null;
                   },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //BIO
-                TextFieldInput(
-                  labelText: LocaleKeys.bio.tr(),
-                  textInputType: TextInputType.text,
-                  textEditingController: _bioController,
-                  validator: bioValidator,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //SELECT PROFILE PET TAG
-                Text(LocaleKeys.petTagQuestion.tr(), style: theme.textTheme.titleMedium),
-                const SizedBox(
-                  height: 10,
-                ),
-                TagTextField(
-                  selectedTagsProvider: selectedTagsProvider('petTag'),
+                );
+              }),
+              const SizedBox(
+                height: 20,
+              ),
+              //BIO
+              TextFieldInput(
+                labelText: LocaleKeys.bio.tr(),
+                textInputType: TextInputType.text,
+                textEditingController: _bioController,
+                validator: bioValidator,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              //SELECT PROFILE PET TAG
+              Text(LocaleKeys.petTagQuestion.tr(), style: theme.textTheme.titleMedium),
+              const SizedBox(
+                height: 10,
+              ),
+              Consumer(builder: (context, ref, child) {
+                ref.watch(getPetTagsCollectionProvider);
+                return TagTextField(
+                  tag: 'petTag',
                   helper: LocaleKeys.chooseOnlyOneTag.tr(),
-                  validator: emptyField,
                   formKeyTwo: formKey,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (formKey.currentState!.validate() && formKeyTwo.currentState!.validate()) {
-                      await ref
-                          .read(profileControllerProvider.notifier)
-                          .createProfile(
-                            username: _usernameController.text,
-                            bio: _bioController.text,
-                            petTag: selectedPetTag,
-                            file: _image,
-                            uid: FirebaseAuth.instance.currentUser!.uid,
-                          )
-                          .then((value) {
-                        context.pop();
-                        _usernameController.clear();
-                        _bioController.clear();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(LocaleKeys.profileCreated.tr()),
-                          ),
-                        );
-                      });
-                    }
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: ShapeDecoration(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                  validator: emptyField,
+                );
+              }),
+              const SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                onTap: () async {
+                  if (formKey.currentState!.validate() && formKeyTwo.currentState!.validate()) {
+                    await ref
+                        .read(profileControllerProvider.notifier)
+                        .createProfile(
+                          username: _usernameController.text,
+                          bio: _bioController.text,
+                          petTag: selectedPetTag,
+                          file: _image,
+                          uid: FirebaseAuth.instance.currentUser!.uid,
+                        )
+                        .then((value) {
+                      context.pop();
+                      _usernameController.clear();
+                      _bioController.clear();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(LocaleKeys.profileCreated.tr()),
                         ),
-                        color: theme.colorScheme.secondary),
-                    child: state.isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: theme.colorScheme.secondary,
-                            ),
-                          )
-                        : Text(LocaleKeys.confirm.tr()),
-                  ),
+                      );
+                    });
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: ShapeDecoration(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                      ),
+                      color: theme.colorScheme.secondary),
+                  child: state.isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: theme.colorScheme.secondary,
+                          ),
+                        )
+                      : Text(LocaleKeys.confirm.tr()),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      })
+        ),
+      )
     ]);
   }
 }

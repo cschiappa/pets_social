@@ -22,7 +22,13 @@ class TagRepository {
 
   //GET USER TAGS
   Stream<List<String>?> getUserTags(String tagsId) {
-    final String userPath = FirestorePath.user(_auth.currentUser!.uid);
+    final user = _auth.currentUser;
+
+    if (user == null) {
+      return const Stream.empty(); // or return null, depending on your use case
+    }
+
+    final String userPath = FirestorePath.user(user.uid);
 
     return _firestore.doc(userPath).snapshots().map(
       (snapshot) {
