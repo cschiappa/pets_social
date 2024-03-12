@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -44,7 +45,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
+    return Stack(alignment: Alignment.bottomCenter, children: [
       SizedBox.expand(
         child: FittedBox(
           fit: BoxFit.fitWidth,
@@ -69,6 +70,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           ),
         ),
       ),
+      VideoProgressIndicator(
+        _controller,
+        allowScrubbing: true,
+        colors: VideoProgressColors(playedColor: Colors.grey.shade300),
+      )
     ]);
   }
 

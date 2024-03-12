@@ -96,6 +96,8 @@ class AuthRepository {
     await batch.commit();
 
     _firestore.doc(userPath).collection('purchasedPrizes').doc().set({'text': ''});
+
+    await _notificationRepository.initNotifications();
   }
 
   //LOG IN

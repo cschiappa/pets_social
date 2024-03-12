@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
+import 'package:pets_social/features/post/widgets/video_player.dart';
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
@@ -26,6 +27,7 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
   String? _fileType;
   Uint8List? _thumbnail;
   String? _filePath;
+  String? _tempVideoUrl;
   final TextEditingController _descriptionController = TextEditingController();
 
   //SELECT IMAGE
@@ -220,14 +222,12 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
                           )
                         : Container(
                             constraints: const BoxConstraints(maxHeight: 600),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                color: Colors.black,
-                                image: DecorationImage(
-                                  image: MemoryImage(_thumbnail!),
-                                  fit: BoxFit.cover,
-                                  alignment: FractionalOffset.topCenter,
-                                )),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: () {
+                                return VideoPlayerWidget(videoUrl: Uri.parse(_filePath!));
+                              }(),
+                            ),
                           )),
                 Padding(
                   padding: const EdgeInsets.all(20.0),

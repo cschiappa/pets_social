@@ -79,7 +79,7 @@ String getContentTypeFromUrl(fileType) {
   // Check if the URL ends with a known video file extension
   final videoExtensions = ['mp4', 'avi', 'mov', 'mkv', 'webm', 'gif'];
 
-  if (videoExtensions.contains(fileType)) {
+  if (videoExtensions.contains(fileType.contains('/') ? fileType.split('/')[1] : fileType.split('.')[1])) {
     return 'video';
   }
 
