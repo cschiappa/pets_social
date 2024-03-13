@@ -26,6 +26,11 @@ abstract class  LocaleKeys {
   static const showLess = 'showLess';
   static const profileCreated = 'profileCreated';
   static const tagsUpdatedSuccessfully = 'tagsUpdatedSuccessfully';
+  static const reportProfileInfo = 'reportProfileInfo';
+  static const reportPostInfo = 'reportPostInfo';
+  static const reportSent = 'reportSent';
+  static const reportProfile = 'reportProfile';
+  static const report = 'report';
   static const store = 'store';
   static const buyMore = 'buyMore';
   static const buy = 'buy';

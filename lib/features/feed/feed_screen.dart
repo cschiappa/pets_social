@@ -368,7 +368,19 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                   tag: 'petTag',
                   helper: LocaleKeys.chooseOnlyOneTag.tr(),
                   formKeyTwo: formKey,
-                  validator: emptyField,
+                  validator: (value) {
+                    final bool isLocked = ref.watch(selectedTagsProvider('petTag')).length == 1;
+                    if (isLocked == false) {
+                      return 'Please choose only one pet tag.';
+                    }
+
+                    String? validate = emptyField(value);
+                    if (validate != null) {
+                      return validate;
+                    }
+
+                    return null;
+                  },
                 );
               }),
               const SizedBox(

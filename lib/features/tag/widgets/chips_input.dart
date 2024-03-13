@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ChipsInput<T> extends StatefulWidget {
-  const ChipsInput({super.key, required this.values, this.decoration = const InputDecoration(), this.style, this.strutStyle, required this.chipBuilder, required this.onChanged, this.onChipTapped, this.onSubmitted, this.onTextChanged, this.helper, this.hintText, this.validator, this.formKeyTwo});
+  const ChipsInput({super.key, required this.values, this.decoration = const InputDecoration(), this.style, this.strutStyle, required this.chipBuilder, required this.onChanged, this.onChipTapped, this.onSubmitted, this.onTextChanged, this.helper, this.hintText, this.validator, this.formKeyTwo, this.readOnly});
 
   final List<T> values;
   final InputDecoration decoration;
@@ -18,6 +18,7 @@ class ChipsInput<T> extends StatefulWidget {
   final String? hintText;
   final String? Function(String?)? validator;
   final GlobalKey<FormState>? formKeyTwo;
+  final bool? readOnly;
 
   @override
   ChipsInputState<T> createState() => ChipsInputState<T>();
@@ -95,6 +96,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
     return Form(
       key: widget.formKeyTwo,
       child: TextFormField(
+        readOnly: widget.readOnly ?? false,
         onTapOutside: (event) {
           FocusManager.instance.primaryFocus?.unfocus();
         },

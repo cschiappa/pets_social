@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/core/constants/constants.dart';
+import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/validators.dart';
 import 'package:pets_social/core/widgets/follow_button.dart';
@@ -35,7 +36,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   late String userId = "";
   Uint8List? _image;
   final bool _isLoading = false;
-  final List<String> settingsOptions = [LocaleKeys.savedPosts.tr(), LocaleKeys.settings.tr()];
+  final TextEditingController _summaryController = TextEditingController();
 
   //SELECT IMAGE
   void selectImage(context, setState) async {
@@ -60,6 +61,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final profileData = ref.watch(getProfileDataProvider(userId));
     final profilePosts = ref.watch(getProfilePostsProvider(userId));
 
+    final List<String> settingsOptions = [LocaleKeys.savedPosts.tr(), LocaleKeys.settings.tr(), if (userId != profile!.profileUid) LocaleKeys.reportProfile.tr()];
+
+    ref.listen<AsyncValue>(
+      postControllerProvider,
+      (_, state) => state.showSnackbarOnError(context),
+    );
+    final AsyncValue<void> state = ref.watch(postControllerProvider);
+
     return profileData.when(
       error: (error, stackTrace) => Text('Error: $error'),
       loading: () => Center(
@@ -69,7 +78,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       data: (profileData) {
         return Scaffold(
-          appBar: _appBar(theme, profileData.username),
+          appBar: _appBar(theme, profileData.username, profile, settingsOptions, state),
           body: LiquidPullRefresh(
             key: LiquidKeys.liquidKey3,
             onRefresh: _handleRefresh,
@@ -409,7 +418,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  PreferredSizeWidget? _appBar(ThemeData theme, text) {
+  PreferredSizeWidget? _appBar(ThemeData theme, text, ModelProfile profile, List<String> settingsOptions, state) {
     return AppBar(
       backgroundColor: theme.appBarTheme.backgroundColor,
       //APPBAR ROW
@@ -437,6 +446,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 Navigator.pop(context);
 
                                 context.goNamed(AppRouter.settings.name);
+                              } else if (e == LocaleKeys.reportProfile.tr()) {
+                                _showReportBottomSheet(context, state);
                               }
                             },
                             child: Container(
@@ -456,5 +467,72 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       centerTitle: false,
     );
+  }
+
+  void _showReportBottomSheet(BuildContext context, state) {
+    final ThemeData theme = Theme.of(context);
+
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        context: context,
+        isScrollControlled: true,
+        builder: ((context) {
+          return Padding(
+            padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(50),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(LocaleKeys.reportProfileInfo.tr()),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFieldInput(
+                      labelText: LocaleKeys.summary.tr(),
+                      textInputType: TextInputType.text,
+                      textEditingController: _summaryController,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        await ref.read(postControllerProvider.notifier).reportPost('profiles', userId, '', _summaryController.text).then((value) {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          showSnackBar(LocaleKeys.reportSent.tr(), context);
+                        });
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: ShapeDecoration(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                            ),
+                            color: theme.colorScheme.secondary),
+                        child: state.isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              )
+                            : Text(LocaleKeys.confirm.tr()),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }));
   }
 }

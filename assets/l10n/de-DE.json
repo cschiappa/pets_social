@@ -25,6 +25,12 @@
     "profileCreated": "Profil erfolgreich erstellt!",
     "tagsUpdatedSuccessfully": "Tags erfolgreich aktualisiert!",
 
+    "reportProfileInfo": "Teile uns mit, warum du dieses Profil meldest",
+    "reportPostInfo": "Teile uns mit, warum du diesen Beitrag meldest",
+    "reportSent": "Dein Bericht wurde gesendet! Wir werden ihn sorgfältig überprüfen.",
+    "reportProfile": "Profil melden",
+    "report": "Melden",
+
     "store": "Geschäft",
     "buyMore": "Mehr kaufen",
     "buy": "Kaufen",

@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/core/providers/firebase_providers.dart';
-import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/features/tag/repository/tag_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

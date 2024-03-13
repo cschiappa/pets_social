@@ -12,6 +12,7 @@ import 'package:pets_social/features/notification/repository/notification_reposi
 import 'package:pets_social/core/constants/firebase_constants.dart';
 import 'package:pets_social/core/providers/storage_methods.dart';
 import 'package:pets_social/models/prize.dart';
+import 'package:pets_social/models/report.dart';
 
 import 'package:uuid/uuid.dart';
 import '../../../models/post.dart';
@@ -340,8 +341,28 @@ class PostRepository {
     return _firestore.collection('posts').where('profileUid', isEqualTo: profileUid).orderBy('datePublished', descending: true).snapshots();
   }
 
+  //GET POST BY ID
   Stream<ModelPost> getPostById(String postId) {
     final String postPath = FirestorePath.post(postId);
     return _firestore.doc(postPath).snapshots().map((event) => ModelPost.fromSnap(event));
+  }
+
+  //REPORT PROFILE OR POST
+  Future<void> reportPost(String reportType, String reportedProfile, String reportedPostId, String summary) async {
+    String reportId = const Uuid().v1();
+    final String reportsPath = FirestorePath.reports(reportType, reportId);
+
+    ModelReport report = ModelReport(
+      reportType: reportType,
+      reportId: reportId,
+      reportedProfile: reportedProfile,
+      reportedPostId: reportedPostId,
+      summary: summary,
+      datePublished: DateTime.now(),
+    );
+
+    _firestore.doc(reportsPath).set(
+          report.toJson(),
+        );
   }
 }

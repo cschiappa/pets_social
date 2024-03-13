@@ -25,6 +25,12 @@
     "profileCreated": "프로필이 성공적으로 생성되었습니다!",
     "tagsUpdatedSuccessfully": "태그가 성공적으로 업데이트되었습니다!",
 
+    "reportProfileInfo": "이 프로필을 신고하는 이유를 알려주세요",
+    "reportPostInfo": "이 게시물을 신고하는 이유를 알려주세요",
+    "reportSent": "신고가 전송되었습니다! 신중하게 검토하겠습니다.",
+    "reportProfile": "프로필 신고",
+    "report": "신고",
+
     "store": "상점",
     "buyMore": "더 구매하기",
     "buy": "구매",

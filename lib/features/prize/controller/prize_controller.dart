@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/core/providers/firebase_providers.dart';
-import 'package:pets_social/features/post/controller/post_controller.dart';
 import 'package:pets_social/features/prize/repository/prize_repository.dart';
 import 'package:pets_social/models/prize.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

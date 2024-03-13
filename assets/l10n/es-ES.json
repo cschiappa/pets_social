@@ -25,6 +25,12 @@
     "profileCreated": "¡Perfil creado exitosamente!",
     "tagsUpdatedSuccessfully": "¡Etiquetas actualizadas exitosamente!",
 
+    "reportProfileInfo": "Cuéntanos por qué estás denunciando este perfil",
+    "reportPostInfo": "Cuéntanos por qué estás denunciando esta publicación",
+    "reportSent": "¡Tu informe ha sido enviado! Lo revisaremos cuidadosamente.",
+    "reportProfile": "Denunciar perfil",
+    "report": "Denunciar",
+
     "store": "Tienda",
     "buyMore": "Comprar más",
     "buy": "Comprar",

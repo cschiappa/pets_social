@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/core/providers/firebase_providers.dart';
 import 'package:pets_social/core/providers/storage_methods.dart';
-import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/features/notification/controller/notification_controller.dart';
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
 import 'package:pets_social/models/account.dart';
@@ -173,6 +172,12 @@ class PostController extends _$PostController {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => postRepository.postComment(comment));
+  }
+
+  Future<void> reportPost(String reportType, String reportedProfile, String reportedPostId, String summary) async {
+    final postRepository = ref.read(postRepositoryProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => postRepository.reportPost(reportType, reportedProfile, reportedPostId, summary));
   }
 }
 

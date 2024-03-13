@@ -290,7 +290,19 @@ class _SignupScreenTwoState extends ConsumerState<ConsumerStatefulWidget> {
                     tag: 'petTag',
                     helper: LocaleKeys.chooseOnlyOneTag.tr(),
                     formKeyTwo: formKeyTwo,
-                    validator: emptyField,
+                    validator: (value) {
+                      final bool isLocked = ref.watch(selectedTagsProvider('petTag')).length == 1;
+                      if (isLocked == false) {
+                        return 'Please choose only one pet tag.';
+                      }
+
+                      String? validate = emptyField(value);
+                      if (validate != null) {
+                        return validate;
+                      }
+
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: 40,

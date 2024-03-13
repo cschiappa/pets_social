@@ -2,12 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
-import 'package:pets_social/features/auth/controller/auth_controller.dart';
+import 'package:pets_social/core/widgets/bottom_sheet.dart';
 import 'package:pets_social/features/prize/widgets/prize_animation.dart';
 import 'package:pets_social/features/prize/widgets/prize_list.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
@@ -17,7 +18,6 @@ import 'package:pets_social/router.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/features/prize/widgets/carousel_slider.dart';
-import 'package:pets_social/features/post/widgets/save_post_animation.dart';
 import 'package:pets_social/core/widgets/text_field_input.dart';
 import 'package:pets_social/features/post/widgets/video_player.dart';
 
@@ -37,6 +37,7 @@ class _PostCardState extends ConsumerState<PostCard> {
   bool isLikeAnimating = false;
   final CarouselController _controller = CarouselController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _summaryController = TextEditingController();
 
   @override
   void initState() {
@@ -299,7 +300,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                                 if (widget.post.profileUid == profile.profileUid)
                                                   InkWell(
                                                     onTap: () {
-                                                      _profileBottomSheet(context, state);
+                                                      _editPostBottomSheet(context, state);
                                                     },
                                                     child: Container(
                                                       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -367,6 +368,17 @@ class _PostCardState extends ConsumerState<PostCard> {
                                                               child: Text(LocaleKeys.blockProfile.tr()),
                                                             ),
                                                           ),
+                                                if (widget.post.profileUid != profile.profileUid)
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      _showReportBottomSheet(context, state);
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                      child: Text(LocaleKeys.report.tr()),
+                                                    ),
+                                                  ),
                                               ],
                                             );
                                           }),
@@ -490,7 +502,7 @@ class _PostCardState extends ConsumerState<PostCard> {
   }
 
   //EDIT POST BOTTOM SHEET
-  void _profileBottomSheet(BuildContext context, state) {
+  void _editPostBottomSheet(BuildContext context, state) {
     final ThemeData theme = Theme.of(context);
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
@@ -547,5 +559,71 @@ class _PostCardState extends ConsumerState<PostCard> {
         );
       }),
     );
+  }
+
+  void _showReportBottomSheet(BuildContext context, state) {
+    final ThemeData theme = Theme.of(context);
+
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        context: context,
+        isScrollControlled: true,
+        builder: ((context) {
+          return Padding(
+            padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(50),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(LocaleKeys.reportPostInfo.tr()),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFieldInput(
+                      labelText: LocaleKeys.summary.tr(),
+                      textInputType: TextInputType.text,
+                      textEditingController: _summaryController,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        await ref.read(postControllerProvider.notifier).reportPost('posts', widget.post.profileUid, widget.post.postId, _summaryController.text).then((value) {
+                          showSnackBar(LocaleKeys.reportSent.tr(), context);
+                          Navigator.of(context).pop();
+                        });
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: ShapeDecoration(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                            ),
+                            color: theme.colorScheme.secondary),
+                        child: state.isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              )
+                            : Text(LocaleKeys.confirm.tr()),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }));
   }
 }

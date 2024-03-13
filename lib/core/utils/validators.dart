@@ -44,3 +44,15 @@ String? passwordValidator(String? value) {
   }
   return null;
 }
+
+String? petTagValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please enter this field.';
+  }
+
+  if (value.length == 1) {
+    return 'Please choose only one tag.';
+  }
+
+  return null;
+}

@@ -27,7 +27,6 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
   String? _fileType;
   Uint8List? _thumbnail;
   String? _filePath;
-  String? _tempVideoUrl;
   final TextEditingController _descriptionController = TextEditingController();
 
   //SELECT IMAGE

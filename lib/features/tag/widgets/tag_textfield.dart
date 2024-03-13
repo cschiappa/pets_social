@@ -11,8 +11,9 @@ class TagTextField extends ConsumerStatefulWidget {
   final String? hintText;
   final String? Function(String?)? validator;
   final GlobalKey<FormState>? formKeyTwo;
+  final bool? readOnly;
 
-  const TagTextField({super.key, required this.tag, this.helper, this.hintText, this.validator, this.formKeyTwo});
+  const TagTextField({super.key, required this.tag, this.helper, this.hintText, this.validator, this.formKeyTwo, this.readOnly});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _TagTextFieldState();
@@ -22,6 +23,7 @@ class _TagTextFieldState extends ConsumerState<TagTextField> {
   List<String> _suggestions = <String>[];
   final FocusNode _chipFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
+  bool isLocked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class _TagTextFieldState extends ConsumerState<TagTextField> {
             hintText: widget.hintText,
             validator: widget.validator,
             formKeyTwo: widget.formKeyTwo,
+            readOnly: isLocked,
           ),
           if (_suggestions.isNotEmpty)
             Scrollbar(
@@ -97,17 +100,30 @@ class _TagTextFieldState extends ConsumerState<TagTextField> {
   //SELECT SUGGESTION
   void _selectSuggestion(String tag) {
     ref.read(selectedTagsProvider(widget.tag)).add(tag);
+    final petTag = ref.watch(selectedTagsProvider('petTag'));
+    final widgetTag = ref.watch(selectedTagsProvider(widget.tag));
 
     setState(() {
       _suggestions = <String>[];
+
+      if (widgetTag == petTag && petTag.length == 1) {
+        isLocked = true;
+      }
     });
   }
 
   //DELETE CHIP
   void _onChipDeleted(String tag) {
     ref.read(selectedTagsProvider(widget.tag)).remove(tag);
+    final petTag = ref.watch(selectedTagsProvider('petTag'));
+    final widgetTag = ref.watch(selectedTagsProvider(widget.tag));
+
     setState(() {
       _suggestions = <String>[];
+
+      if (widgetTag == petTag && petTag.length != 1) {
+        isLocked = false;
+      }
     });
   }
 

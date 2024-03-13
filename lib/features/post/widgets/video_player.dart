@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -23,11 +22,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   //INITIALIZE VIDEO CONTROLLER
   void _initializeVideoController() async {
     _controller = VideoPlayerController.networkUrl(widget.videoUrl);
-    await _controller.initialize();
-    setState(() {
-      _controller.play();
-      _isPlaying = true;
-    });
+    await _controller.initialize().then((value) => setState(() {
+          _controller.play();
+          _isPlaying = true;
+        }));
+
     _controller.setLooping(true);
   }
 
