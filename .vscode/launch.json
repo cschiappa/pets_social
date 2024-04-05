@@ -25,7 +25,11 @@
             "name": "pets_social (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "args": [
+                "--dart-define-from-file",
+                "environment.json",
+            ]
         }
     ]
 }
