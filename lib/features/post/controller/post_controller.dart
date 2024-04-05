@@ -31,6 +31,9 @@ PostRepository postRepository(PostRepositoryRef ref) {
 //SHOW/HIDE DESCRIPTION
 final showDescriptionProvider = StateProvider<bool>((ref) => false);
 
+//TEMPORARY SAVE PICTURE
+final temporaryPicture = StateProvider.autoDispose<String?>((ref) => null);
+
 //GET ALL POSTS IN DESCENDING
 @riverpod
 Future<List<ModelPost>> getPostsDescending(GetPostsDescendingRef ref, ModelAccount account, ModelProfile profile) {

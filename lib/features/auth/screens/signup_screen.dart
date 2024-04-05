@@ -118,7 +118,7 @@ class _SignupScreenState extends ConsumerState<ConsumerStatefulWidget> {
                       validator: (value) {
                         final isAvailable = ref.watch(isUsernameAvailableProvider(value));
                         if (isAvailable.value == false) {
-                          return 'Username not available';
+                          return LocaleKeys.usernameNotAvailable.tr();
                         }
                         String? validate = usernameValidator(value);
                         if (validate != null) {
@@ -139,7 +139,7 @@ class _SignupScreenState extends ConsumerState<ConsumerStatefulWidget> {
                       validator: (value) {
                         final isAvailable = ref.watch(isEmailAvailableProvider(value));
                         if (isAvailable.value == false) {
-                          return 'Email not available';
+                          return LocaleKeys.emailNotAvailable.tr();
                         }
                         String? validate = emailValidator(value);
                         if (validate != null) {
@@ -293,7 +293,7 @@ class _SignupScreenTwoState extends ConsumerState<ConsumerStatefulWidget> {
                     validator: (value) {
                       final bool isLocked = ref.watch(selectedTagsProvider('petTag')).length == 1;
                       if (isLocked == false) {
-                        return 'Please choose only one pet tag.';
+                        return LocaleKeys.pleaseChooseOnePetTag.tr();
                       }
 
                       String? validate = emptyField(value);

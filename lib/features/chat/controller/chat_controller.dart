@@ -56,7 +56,7 @@ Stream<List<Map<String, dynamic>>> getLastMessage(GetLastMessageRef ref, String 
 @riverpod
 class ChatController extends _$ChatController {
   @override
-  FutureOr<void> build() {}
+  FutureOr<void> build() async {}
 
   Future<void> sendMessage(String receiverProfileUid, String receiverUsername, String receiverUserUid, String message, ModelProfile? profile) async {
     final chatRepository = ref.watch(chatRepositoryProvider);

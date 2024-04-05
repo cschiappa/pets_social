@@ -25,6 +25,18 @@
     "profileCreated": "个人资料创建成功！",
     "tagsUpdatedSuccessfully": "标签更新成功！",
 
+    "removePicture": "删除图片",
+
+    "verifyEmail": "验证你的电子邮件地址！",
+    "reachedLastStep": "恭喜！您已经到达最后一步！",
+    "tryAgainLinkText": "没有收到链接？请重试：",
+    "resendLink": "重新发送链接",
+    "somethingWrongBackToLogin": "有什么问题吗？返回 ",
+    "usernameNotAvailable": "用户名不可用",
+    "emailNotAvailable": "电子邮件不可用",
+    "pleaseChooseOnePetTag": "请选择一个宠物标签。",
+    "pleaseEnterField": "请输入此字段。",
+
     "reportProfileInfo": "告诉我们你举报此档案的原因",
     "reportPostInfo": "告诉我们你举报此帖子的原因",
     "reportSent": "你的举报已发送！我们将仔细审查。",

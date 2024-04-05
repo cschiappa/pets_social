@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/core/widgets/loading_screen.dart';
 import 'package:pets_social/features/auth/controller/auth_controller.dart';
+import 'package:pets_social/features/auth/screens/email_verification_screen.dart';
 import 'package:pets_social/features/auth/screens/forgot_password_page.dart';
 import 'package:pets_social/features/auth/screens/login_screen.dart';
 import 'package:pets_social/features/auth/screens/signup_screen.dart';
@@ -46,6 +47,7 @@ class AppRouter {
   static const Routes login = Routes(name: 'login', path: '/login');
   static const Routes signup = Routes(name: 'signup', path: '/signup');
   static const Routes signupTwo = Routes(name: 'signupTwo', path: '/signupTwo');
+  static const Routes sendEmailVerification = Routes(name: 'sendEmailVerification', path: '/sendEmailVerification');
   static const Routes recoverPassword = Routes(name: 'recoverPassword', path: '/recover/password');
 
   //Shell
@@ -59,7 +61,7 @@ class AppRouter {
   static const Routes navigateToProfile = Routes(name: 'navigateToProfile', path: '/:profileUid');
 
   //FeedScreen Sub-Routes
-  static const Routes openPostFromDeeplink = Routes(name: 'openPostFromDeeplink', path: '/post/:postId/:profileUid/:username');
+  static const Routes openPostFromDeeplink = Routes(name: 'openPostFromDeeplink', path: 'post/:postId/:profileUid/:username');
   static const Routes profileFromFeed = Routes(name: 'profileFromFeed', path: 'profile/:profileUid');
   static const Routes openPostFromFeed = Routes(name: 'openPostFromFeed', path: 'postFeed/:postId/:username');
   static const Routes commentsFromFeed = Routes(name: 'commentsFromFeed', path: 'post/:postId/:profileUid/:username/comments');
@@ -102,8 +104,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       initialLocation: AppRouter.initialLoading.path,
       redirect: (context, state) {
         final isLoggedIn = ref.watch(isLoggedInProvider);
+        final isEmailVerified = ref.watch(isEmailVerifiedProvider);
 
-        final List<String> initialRoutes = [AppRouter.initialLoading.path, AppRouter.login.path, AppRouter.signup.path, AppRouter.signupTwo.path, AppRouter.recoverPassword.path, AppRouter.welcomePage.path];
+        final List<String> initialRoutes = [AppRouter.initialLoading.path, AppRouter.login.path, AppRouter.signup.path, AppRouter.signupTwo.path, AppRouter.recoverPassword.path, AppRouter.sendEmailVerification.path, AppRouter.welcomePage.path, AppRouter.openPostFromDeeplink.path];
 
         final bool isInitialRoute = initialRoutes.contains(state.matchedLocation);
 
@@ -112,8 +115,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         }
 
         if (isLoggedIn && isInitialRoute) {
-          return AppRouter.feedScreen.path;
+          if (isEmailVerified == true) {
+            return AppRouter.feedScreen.path;
+          } else if (isEmailVerified == false || isEmailVerified == null) {
+            return AppRouter.sendEmailVerification.path;
+          }
         }
+
+        // if (isLoggedIn && isInitialRoute && isEmailVerified == false) {
+
+        // }
 
         return null;
       },
@@ -123,16 +134,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           name: AppRouter.initialLoading.name,
           path: AppRouter.initialLoading.path,
           builder: (context, state) => const LoadingScreen(),
-        ),
-        //DEEPLINK OPEN POST
-        GoRoute(
-          name: AppRouter.openPostFromDeeplink.name,
-          path: AppRouter.openPostFromDeeplink.path,
-          builder: (context, state) => OpenPost(
-            postId: state.pathParameters["postId"]!,
-            profileUid: state.pathParameters["profileUid"]!,
-            username: state.pathParameters["username"]!,
-          ),
         ),
         //WELCOME SCREEN
         GoRoute(
@@ -153,6 +154,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           name: AppRouter.signupTwo.name,
           path: AppRouter.signupTwo.path,
           builder: (context, state) => const SignupScreenTwo(),
+        ),
+        //SEND EMAIL VERIFICATION SCREEN
+        GoRoute(
+          name: AppRouter.sendEmailVerification.name,
+          path: AppRouter.sendEmailVerification.path,
+          builder: (context, state) => const EmailVerificationScreen(),
         ),
         //RECOVER PASSWORD
         GoRoute(
@@ -215,6 +222,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             //SEARCH SCREEN
             StatefulShellBranch(routes: [
               GoRoute(name: AppRouter.searchScreen.name, path: AppRouter.searchScreen.path, builder: (context, state) => const SearchScreen(), routes: <RouteBase>[
+                //DEEPLINK OPEN POST
+                GoRoute(
+                  name: AppRouter.openPostFromDeeplink.name,
+                  path: AppRouter.openPostFromDeeplink.path,
+                  builder: (context, state) => OpenPost(
+                    postId: state.pathParameters["postId"]!,
+                    profileUid: state.pathParameters["profileUid"]!,
+                    username: state.pathParameters["username"]!,
+                  ),
+                ),
                 //NAVIGATE TO PROFILE
                 GoRoute(
                   name: AppRouter.profileFromSearch.name,

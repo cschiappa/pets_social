@@ -25,6 +25,18 @@
     "profileCreated": "Profile created successfully!",
     "tagsUpdatedSuccessfully": "Tags updated successfully!",
 
+    "removePicture": "Remove Picture",
+
+    "verifyEmail": "Verify your email address!",
+    "reachedLastStep": "Congratulations! You have reached the last step!",
+    "tryAgainLinkText": "You didn't receive a link? Try again:",
+    "resendLink": "Resend link",
+    "somethingWrongBackToLogin": "Something is wrong? Go back to the ",
+    "usernameNotAvailable": "Username not available",
+    "emailNotAvailable": "Email not available",
+    "pleaseChooseOnePetTag": "Please choose only one pet tag.",
+    "pleaseEnterField": "Please enter this field.",
+
     "reportProfileInfo": "Tell us why you are reporting this profile",
     "reportPostInfo": "Tell us why you are reporting this post",
     "reportSent": "Your report was sent! We will carefully review it.",

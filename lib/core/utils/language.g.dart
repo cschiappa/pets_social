@@ -26,6 +26,16 @@ abstract class  LocaleKeys {
   static const showLess = 'showLess';
   static const profileCreated = 'profileCreated';
   static const tagsUpdatedSuccessfully = 'tagsUpdatedSuccessfully';
+  static const removePicture = 'removePicture';
+  static const verifyEmail = 'verifyEmail';
+  static const reachedLastStep = 'reachedLastStep';
+  static const tryAgainLinkText = 'tryAgainLinkText';
+  static const resendLink = 'resendLink';
+  static const somethingWrongBackToLogin = 'somethingWrongBackToLogin';
+  static const usernameNotAvailable = 'usernameNotAvailable';
+  static const emailNotAvailable = 'emailNotAvailable';
+  static const pleaseChooseOnePetTag = 'pleaseChooseOnePetTag';
+  static const pleaseEnterField = 'pleaseEnterField';
   static const reportProfileInfo = 'reportProfileInfo';
   static const reportPostInfo = 'reportPostInfo';
   static const reportSent = 'reportSent';

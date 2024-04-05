@@ -136,10 +136,10 @@ class _AccountSettingsPageState extends ConsumerState<ConsumerStatefulWidget> {
                       suffixIcon: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter this field.';
+                          return LocaleKeys.pleaseEnterField.tr();
                         }
                         if (value != _passwordController.text) {
-                          return 'Passwords do not match';
+                          return LocaleKeys.passwordNotMatch.tr();
                         }
                         return null;
                       }),

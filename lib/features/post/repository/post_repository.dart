@@ -232,18 +232,15 @@ class PostRepository {
     });
   }
 
-  //GET SAVED POSTS
-  // Future<List<ModelPost>> getSavedPosts(List<dynamic> savedPosts) async {
-  //   QuerySnapshot querySnapshot = await _firestore.collection('posts').where('postId', whereIn: savedPosts).get();
-
-  //   return querySnapshot.docs.map((doc) => ModelPost.fromSnap(doc)).toList();
-  // }
-
   // GET SAVED POSTS STREAM
   Stream<List<ModelPost>> getSavedPosts(List<dynamic> savedPosts) {
-    return _firestore.collection('posts').where('postId', whereIn: savedPosts).snapshots().map((QuerySnapshot querySnapshot) {
-      return querySnapshot.docs.map((doc) => ModelPost.fromSnap(doc)).toList();
-    });
+    if (savedPosts.isEmpty) {
+      return Stream.value([]);
+    } else {
+      return _firestore.collection('posts').where('postId', whereIn: savedPosts).orderBy('datePublished', descending: true).snapshots().map((QuerySnapshot querySnapshot) {
+        return querySnapshot.docs.map((doc) => ModelPost.fromSnap(doc)).toList();
+      });
+    }
   }
 
   //UPDATE POST

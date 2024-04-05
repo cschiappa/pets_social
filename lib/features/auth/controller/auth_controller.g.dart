@@ -50,7 +50,7 @@ final authStateChangeProvider = StreamProvider<User?>.internal(
 );
 
 typedef AuthStateChangeRef = StreamProviderRef<User?>;
-String _$isLoggedInHash() => r'c5540ec92fb5997c054108f1dd7a3ecc805cabd7';
+String _$isLoggedInHash() => r'4d1b182680b5e7f4703ce527e1ddcf4860c60f2a';
 
 /// See also [isLoggedIn].
 @ProviderFor(isLoggedIn)
@@ -64,7 +64,22 @@ final isLoggedInProvider = Provider<bool>.internal(
 );
 
 typedef IsLoggedInRef = ProviderRef<bool>;
-String _$authControllerHash() => r'0a2677f3f439f5b2be30ac9f5bdd7726533c2abf';
+String _$isEmailVerifiedHash() => r'93d1ef14e08d04eb3b302a695e4835bb78a48af2';
+
+/// See also [isEmailVerified].
+@ProviderFor(isEmailVerified)
+final isEmailVerifiedProvider = Provider<bool?>.internal(
+  isEmailVerified,
+  name: r'isEmailVerifiedProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$isEmailVerifiedHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef IsEmailVerifiedRef = ProviderRef<bool?>;
+String _$authControllerHash() => r'1b78505d508784145c2da848ea016103833d00c5';
 
 /// See also [AuthController].
 @ProviderFor(AuthController)

@@ -106,6 +106,14 @@ class AuthRepository {
     _notificationRepository.initNotifications();
   }
 
+  //SEND EMAIL VERIFICATION
+  Future<void> sendEmailVerification() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await _auth.currentUser!.sendEmailVerification();
+    }
+  }
+
   //SIGN OUT
   Future<void> signOut() async {
     await _notificationRepository.removeTokenFromDatabase();

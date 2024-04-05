@@ -66,10 +66,19 @@ Stream<User?> authStateChange(AuthStateChangeRef ref) {
 //IS LOGGED IN
 @Riverpod(keepAlive: true)
 bool isLoggedIn(IsLoggedInRef ref) {
-  final auth = ref.watch(authStateChangeProvider);
+  final authState = ref.watch(authStateChangeProvider);
   final profile = ref.watch(userProvider);
 
-  return auth.value != null && profile != null;
+  return authState.value != null && profile != null;
+}
+
+//IS EMAIL VERIFIED
+@Riverpod(keepAlive: true)
+bool? isEmailVerified(IsEmailVerifiedRef ref) {
+  final user = ref.read(authProvider);
+  user.currentUser?.reload();
+  user.currentUser;
+  return user.currentUser?.emailVerified;
 }
 
 //AUTH CONTROLLER
@@ -84,6 +93,8 @@ class AuthController extends _$AuthController {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => authRepository.loginUser(email: email, password: password));
     await ref.read(userProvider.notifier).getProfileDetails();
+    ref.invalidate(isEmailVerifiedProvider);
+    ref.read(isEmailVerifiedProvider);
   }
 
   //SIGN UP
@@ -101,6 +112,14 @@ class AuthController extends _$AuthController {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => authRepository.signUp(email: email, password: password, username: username, petTag: petTag, preferedTags: preferedTags, blockedTags: blockedTags, bio: bio, file: file));
     await ref.read(userProvider.notifier).getProfileDetails();
+    ref.read(authControllerProvider.notifier).sendEmailVerification();
+  }
+
+  //SEND EMAIL VERIFICATION
+  Future<void> sendEmailVerification() async {
+    final authRepository = ref.read(authRepositoryProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => authRepository.sendEmailVerification());
   }
 
   //SIGN OUT
@@ -110,6 +129,8 @@ class AuthController extends _$AuthController {
     state = await AsyncValue.guard(() => authRepository.signOut());
     await Future.delayed(const Duration(seconds: 2));
     ref.read(userProvider.notifier).disposeProfile();
+    ref.invalidate(isEmailVerifiedProvider);
+    ref.read(isEmailVerifiedProvider);
   }
 
   //DELETE PROFILE

@@ -25,6 +25,18 @@
     "profileCreated": "프로필이 성공적으로 생성되었습니다!",
     "tagsUpdatedSuccessfully": "태그가 성공적으로 업데이트되었습니다!",
 
+    "removePicture": "사진 제거",
+
+    "verifyEmail": "이메일 주소를 확인하세요!",
+    "reachedLastStep": "축하합니다! 마지막 단계에 도달했습니다!",
+    "tryAgainLinkText": "링크를 받지 못하셨나요? 다시 시도하세요:",
+    "resendLink": "링크 재전송",
+    "somethingWrongBackToLogin": "문제가 있나요? 다시 ",
+    "usernameNotAvailable": "사용자 이름을 사용할 수 없습니다",
+    "emailNotAvailable": "이메일을 사용할 수 없습니다",
+    "pleaseChooseOnePetTag": "하나의 애완동물 태그만 선택해주세요.",
+    "pleaseEnterField": "이 필드를 입력하세요.",
+
     "reportProfileInfo": "이 프로필을 신고하는 이유를 알려주세요",
     "reportPostInfo": "이 게시물을 신고하는 이유를 알려주세요",
     "reportSent": "신고가 전송되었습니다! 신중하게 검토하겠습니다.",

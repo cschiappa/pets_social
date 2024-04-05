@@ -2,13 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
-import 'package:pets_social/core/widgets/bottom_sheet.dart';
 import 'package:pets_social/features/prize/widgets/prize_animation.dart';
 import 'package:pets_social/features/prize/widgets/prize_list.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
@@ -255,7 +253,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                 //SHARE
                                 InkWell(
                                   onTap: () async {
-                                    String path = 'cschiappa.github.io/post/${widget.post.postId}/${widget.post.profileUid}/${profileFromPost!.username}';
+                                    String path = 'cschiappa.github.io/search/post/${widget.post.postId}/${widget.post.profileUid}/${profileFromPost!.username}';
                                     await Share.share(path, subject: 'Pets Social Link'
                                         //sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
                                         );

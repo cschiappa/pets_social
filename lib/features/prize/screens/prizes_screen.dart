@@ -132,7 +132,11 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
           ),
         ),
         child: ListTile(
-          leading: const Icon(Icons.monetization_on),
+          leading: Image.asset(
+            'assets/images/lizzy_coin.png',
+            width: 60,
+            height: 60,
+          ),
           title: Text('$lizzyCoins Lizzy Coins'),
           trailing: FilledButton(
             onPressed: () {},

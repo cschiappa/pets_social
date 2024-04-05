@@ -25,6 +25,18 @@
     "profileCreated": "Perfil criado com sucesso!",
     "tagsUpdatedSuccessfully": "Tags atualizadas com sucesso!",
 
+    "removePicture": "Remover imagem",
+
+    "verifyEmail": "Verifique o seu endereço de email!",
+    "reachedLastStep": "Parabéns! Você chegou à última etapa!",
+    "tryAgainLinkText": "Você não recebeu um link? Tente novamente:",
+    "resendLink": "Reenviar link",
+    "somethingWrongBackToLogin": "Algo está errado? Volte para o ",
+    "usernameNotAvailable": "Nome de usuário não disponível",
+    "emailNotAvailable": "E-mail não disponível",
+    "pleaseChooseOnePetTag": "Por favor, escolha apenas uma etiqueta de animal de estimação.",
+    "pleaseEnterField": "Por favor, preencha este campo.",
+
     "reportProfileInfo": "Diga-nos por que está a denunciar este perfil",
     "reportPostInfo": "Diga-nos por que está a denunciar este post",
     "reportSent": "O seu relatório foi enviado! Vamos analisá-lo com cuidado.",

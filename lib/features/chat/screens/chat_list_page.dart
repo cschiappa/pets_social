@@ -31,10 +31,12 @@ class _ChatListState extends ConsumerState<ChatList> {
       final ModelProfile? profile = ref.read(userProvider);
       QuerySnapshot<Map<String, dynamic>> usersSnapshot = await FirebaseFirestore.instance.collectionGroup('profiles').where('profileUid', whereIn: profile!.following).get();
 
-      for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
-        ModelProfile profile = ModelProfile.fromSnap(doc);
+      if (usersSnapshot.docs.isNotEmpty) {
+        for (QueryDocumentSnapshot doc in usersSnapshot.docs) {
+          ModelProfile profile = ModelProfile.fromSnap(doc);
 
-        profiles.add(profile);
+          profiles.add(profile);
+        }
       }
     });
   }

@@ -60,11 +60,13 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   //SELECT IMAGE
-  void selectImage(context, setState) async {
+  void selectImage() async {
     Uint8List im;
-    (im, _, _, _) = await pickImage(ImageSource.gallery);
+    String filePath;
+    (im, _, _, filePath) = await pickImage(ImageSource.gallery);
     setState(() {
       _image = im;
+      ref.read(temporaryPicture.notifier).state = filePath;
     });
   }
 
@@ -296,36 +298,44 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
       Form(
         key: formKeyTwo,
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                children: [
-                  _image != null
-                      ? CircleAvatar(
-                          radius: 40,
-                          backgroundImage: MemoryImage(_image!),
-                        )
-                      : const CircleAvatar(radius: 40, backgroundImage: AssetImage('assets/images/default_pic.jpg')),
-                  Positioned(
-                    top: 40,
-                    left: 40,
-                    child: IconButton(
-                      iconSize: 20,
-                      onPressed: () => selectImage(context, setState),
-                      icon: const Icon(
-                        Icons.add_a_photo,
+          child: Consumer(builder: (context, ref, child) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  children: [
+                    ref.watch(temporaryPicture) != null
+                        ? CircleAvatar(
+                            radius: 40,
+                            backgroundImage: MemoryImage(_image!),
+                          )
+                        : const CircleAvatar(radius: 40, backgroundImage: AssetImage('assets/images/default_pic.jpg')),
+                    Positioned(
+                      top: 40,
+                      left: 40,
+                      child: IconButton(
+                        iconSize: 20,
+                        onPressed: () => selectImage(),
+                        icon: const Icon(
+                          Icons.add_a_photo,
+                        ),
                       ),
                     ),
+                  ],
+                ),
+                if (ref.watch(temporaryPicture) != null)
+                  InkWell(
+                    onTap: () => ref.read(temporaryPicture.notifier).state = null,
+                    child: Text(
+                      LocaleKeys.removePicture.tr(),
+                      style: const TextStyle(fontSize: 10),
+                    ),
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              //USERNAME
-              Consumer(builder: (context, ref, child) {
-                return TextFieldInput(
+                const SizedBox(
+                  height: 20,
+                ),
+                //USERNAME
+                TextFieldInput(
                   labelText: LocaleKeys.username.tr(),
                   textInputType: TextInputType.text,
                   textEditingController: _usernameController,
@@ -342,94 +352,94 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
                     return null;
                   },
-                );
-              }),
-              const SizedBox(
-                height: 20,
-              ),
-              //BIO
-              TextFieldInput(
-                labelText: LocaleKeys.bio.tr(),
-                textInputType: TextInputType.text,
-                textEditingController: _bioController,
-                validator: bioValidator,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              //SELECT PROFILE PET TAG
-              Text(LocaleKeys.petTagQuestion.tr(), style: theme.textTheme.titleMedium),
-              const SizedBox(
-                height: 10,
-              ),
-              Consumer(builder: (context, ref, child) {
-                ref.watch(getPetTagsCollectionProvider);
-                return TagTextField(
-                  tag: 'petTag',
-                  helper: LocaleKeys.chooseOnlyOneTag.tr(),
-                  formKeyTwo: formKey,
-                  validator: (value) {
-                    final bool isLocked = ref.watch(selectedTagsProvider('petTag')).length == 1;
-                    if (isLocked == false) {
-                      return 'Please choose only one pet tag.';
-                    }
-
-                    String? validate = emptyField(value);
-                    if (validate != null) {
-                      return validate;
-                    }
-
-                    return null;
-                  },
-                );
-              }),
-              const SizedBox(
-                height: 20,
-              ),
-              InkWell(
-                onTap: () async {
-                  if (formKey.currentState!.validate() && formKeyTwo.currentState!.validate()) {
-                    await ref
-                        .read(profileControllerProvider.notifier)
-                        .createProfile(
-                          username: _usernameController.text,
-                          bio: _bioController.text,
-                          petTag: selectedPetTag,
-                          file: _image,
-                          uid: FirebaseAuth.instance.currentUser!.uid,
-                        )
-                        .then((value) {
-                      context.pop();
-                      _usernameController.clear();
-                      _bioController.clear();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(LocaleKeys.profileCreated.tr()),
-                        ),
-                      );
-                    });
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: ShapeDecoration(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                      ),
-                      color: theme.colorScheme.secondary),
-                  child: state.isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: theme.colorScheme.secondary,
-                          ),
-                        )
-                      : Text(LocaleKeys.confirm.tr()),
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //BIO
+                TextFieldInput(
+                  labelText: LocaleKeys.bio.tr(),
+                  textInputType: TextInputType.text,
+                  textEditingController: _bioController,
+                  validator: bioValidator,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //SELECT PROFILE PET TAG
+                Text(LocaleKeys.petTagQuestion.tr(), style: theme.textTheme.titleMedium),
+                const SizedBox(
+                  height: 10,
+                ),
+                Consumer(builder: (context, ref, child) {
+                  ref.watch(getPetTagsCollectionProvider);
+                  return TagTextField(
+                    tag: 'petTag',
+                    helper: LocaleKeys.chooseOnlyOneTag.tr(),
+                    formKeyTwo: formKey,
+                    validator: (value) {
+                      final bool isLocked = ref.watch(selectedTagsProvider('petTag')).length == 1;
+                      if (isLocked == false) {
+                        return 'Please choose only one pet tag.';
+                      }
+
+                      String? validate = emptyField(value);
+                      if (validate != null) {
+                        return validate;
+                      }
+
+                      return null;
+                    },
+                  );
+                }),
+                const SizedBox(
+                  height: 20,
+                ),
+                InkWell(
+                  onTap: () async {
+                    if (formKey.currentState!.validate() && formKeyTwo.currentState!.validate()) {
+                      await ref
+                          .read(profileControllerProvider.notifier)
+                          .createProfile(
+                            username: _usernameController.text,
+                            bio: _bioController.text,
+                            petTag: selectedPetTag,
+                            file: _image,
+                            uid: FirebaseAuth.instance.currentUser!.uid,
+                          )
+                          .then((value) {
+                        context.pop();
+                        _usernameController.clear();
+                        _bioController.clear();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(LocaleKeys.profileCreated.tr()),
+                          ),
+                        );
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: ShapeDecoration(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                        color: theme.colorScheme.secondary),
+                    child: state.isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: theme.colorScheme.secondary,
+                            ),
+                          )
+                        : Text(LocaleKeys.confirm.tr()),
+                  ),
+                ),
+              ],
+            );
+          }),
         ),
       )
     ]);

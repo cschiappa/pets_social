@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:pets_social/core/widgets/follow_button.dart';
 import 'package:pets_social/core/widgets/liquid_pull_refresh.dart';
 import 'package:pets_social/core/widgets/text_field_input.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
+import 'package:pets_social/features/prize/controller/prize_controller.dart';
 import 'package:pets_social/features/prize/widgets/prize_list_profile.dart';
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
 import 'package:pets_social/models/profile.dart';
@@ -35,21 +37,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
   late String userId = "";
   Uint8List? _image;
+  String? _imagePath;
   final bool _isLoading = false;
   final TextEditingController _summaryController = TextEditingController();
 
   //SELECT IMAGE
-  void selectImage(context, setState) async {
+  void selectImage() async {
     Uint8List im;
-    (im, _, _, _) = await pickImage(ImageSource.gallery);
+    String filePath;
+    (im, _, _, filePath) = await pickImage(ImageSource.gallery);
     setState(() {
       _image = im;
+      _imagePath = filePath;
+      ref.read(temporaryPicture.notifier).state = filePath;
     });
   }
 
   //REFRESH PROFILE
   Future<void> _handleRefresh() async {
     await ref.read(userProvider.notifier).getProfileDetails();
+    ref.invalidate(getProfilePrizesProvider(userId));
+    ref.read(getProfilePrizesProvider(userId));
     return await Future.delayed(const Duration(milliseconds: 500));
   }
 
@@ -186,7 +194,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             }
                             return GestureDetector(
                               onTap: () {
-                                post.profileUid == profile!.profileUid
+                                post.profileUid == profile.profileUid
                                     ? context.goNamed(
                                         AppRouter.openPostFromProfile.name,
                                         pathParameters: {
@@ -306,6 +314,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   _profileBottomSheet(BuildContext context) {
     final profile = ref.watch(userProvider)!;
     final ThemeData theme = Theme.of(context);
+    String defaultPicture = 'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
 
     return CustomBottomSheet.show(
       context: context,
@@ -314,40 +323,50 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           builder: (BuildContext context, StateSetter setState) {
             return Form(
               key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Stack(
-                    children: [
-                      _image != null
-                          ? CircleAvatar(
-                              radius: 40,
-                              backgroundImage: MemoryImage(_image!),
-                            )
-                          : CircleAvatar(
-                              radius: 40,
-                              backgroundImage: NetworkImage(
-                                profile.photoUrl ?? '',
-                              )),
-                      Positioned(
-                        top: 40,
-                        left: 40,
-                        child: IconButton(
-                          iconSize: 20,
-                          onPressed: () => selectImage(context, setState),
-                          icon: const Icon(
-                            Icons.add_a_photo,
+              child: Consumer(builder: (context, ref, child) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      children: [
+                        ref.watch(temporaryPicture) != null
+                            ? CircleAvatar(
+                                radius: 40,
+                                backgroundImage: ref.watch(temporaryPicture) != defaultPicture
+                                    ? FileImage(
+                                        File(_imagePath ?? defaultPicture),
+                                      )
+                                    : NetworkImage(defaultPicture) as ImageProvider)
+                            : CircleAvatar(
+                                radius: 40,
+                                backgroundImage: NetworkImage(profile.photoUrl ?? ''),
+                              ),
+                        Positioned(
+                          top: 40,
+                          left: 40,
+                          child: IconButton(
+                            iconSize: 20,
+                            onPressed: () => selectImage(),
+                            icon: const Icon(
+                              Icons.add_a_photo,
+                            ),
                           ),
                         ),
+                      ],
+                    ),
+                    if (ref.watch(temporaryPicture) != defaultPicture)
+                      InkWell(
+                        onTap: () => ref.read(temporaryPicture.notifier).state = defaultPicture,
+                        child: Text(
+                          LocaleKeys.removePicture.tr(),
+                          style: const TextStyle(fontSize: 10),
+                        ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  //USERNAME
-                  Consumer(builder: (context, ref, child) {
-                    return TextFieldInput(
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    //USERNAME
+                    TextFieldInput(
                       labelText: LocaleKeys.username.tr(),
                       textInputType: TextInputType.text,
                       initialValue: profile.username,
@@ -355,7 +374,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       validator: (value) {
                         final isAvailable = ref.watch(isUsernameAvailableProvider(value));
                         if (isAvailable.value == false) {
-                          return 'Username not available';
+                          return LocaleKeys.usernameNotAvailable.tr();
                         }
 
                         String? validate = usernameValidator(value);
@@ -365,52 +384,52 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                         return null;
                       },
-                    );
-                  }),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFieldInput(
-                    labelText: LocaleKeys.bio.tr(),
-                    textInputType: TextInputType.text,
-                    initialValue: profile.bio,
-                    onChanged: ref.read(userProvider.notifier).updateBio,
-                    validator: bioValidator,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      if (formKey.currentState!.validate()) {
-                        final ModelProfile? profile = ref.read(userProvider);
-
-                        await ref.read(profileControllerProvider.notifier).updateProfile(profileUid: profile!.profileUid, file: _image, newUsername: profile.username, newBio: profile.bio!).then((value) {
-                          context.pop();
-                          showSnackBar(LocaleKeys.profileUpdated.tr(), context);
-                        });
-                      }
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: ShapeDecoration(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                          ),
-                          color: theme.colorScheme.secondary),
-                      child: _isLoading
-                          ? Center(
-                              child: CircularProgressIndicator(
-                                color: theme.colorScheme.primary,
-                              ),
-                            )
-                          : Text(LocaleKeys.updateProfile.tr()),
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFieldInput(
+                      labelText: LocaleKeys.bio.tr(),
+                      textInputType: TextInputType.text,
+                      initialValue: profile.bio,
+                      onChanged: ref.read(userProvider.notifier).updateBio,
+                      validator: bioValidator,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        if (formKey.currentState!.validate()) {
+                          final ModelProfile? profile = ref.read(userProvider);
+
+                          await ref.read(profileControllerProvider.notifier).updateProfile(profileUid: profile!.profileUid, file: _image, newUsername: profile.username, newBio: profile.bio!).then((value) {
+                            context.pop();
+                            showSnackBar(LocaleKeys.profileUpdated.tr(), context);
+                          });
+                        }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: ShapeDecoration(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                            ),
+                            color: theme.colorScheme.secondary),
+                        child: _isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: theme.colorScheme.primary,
+                                ),
+                              )
+                            : Text(LocaleKeys.updateProfile.tr()),
+                      ),
+                    ),
+                  ],
+                );
+              }),
             );
           },
         ),
