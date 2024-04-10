@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
+import 'package:pets_social/core/widgets/info_bubble/show_info_bubble.dart';
 import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/features/prize/widgets/grey_card.dart';
 import 'package:pets_social/features/prize/widgets/store_prize_card.dart';
@@ -26,6 +28,7 @@ class PrizesScreen extends ConsumerStatefulWidget {
 }
 
 class _PrizesScreenState extends ConsumerState<PrizesScreen> {
+  final bubbleKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     final ModelProfile profile = ref.watch(userProvider)!;
@@ -75,7 +78,7 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  _storeCard(theme, state),
+                  _storeCard(theme, state, bubbleKey),
                 ],
               ),
             ),
@@ -208,47 +211,63 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
         ));
   }
 
-  Widget _storeCard(ThemeData theme, state) {
+  Widget _storeCard(ThemeData theme, state, bubbleKey) {
     final prizes = ref.watch(getPaidPrizesProvider);
-    return Container(
-      alignment: Alignment.topLeft,
-      child: Column(
-        children: [
-          Text(
-            LocaleKeys.store.tr(),
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Lemon'),
-          ),
-          prizes.when(
-            error: (error, stacktrace) => Text('error: $error'),
-            loading: () => Center(
-              child: CircularProgressIndicator(
-                color: theme.colorScheme.secondary,
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: 45,
+            ),
+            Text(
+              LocaleKeys.store.tr(),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Lemon'),
+            ),
+            IconButton(
+              onPressed: () {
+                showInfoBubble('Tool tip title', 'Tool tip description it is', bubbleKey, Colors.pink.shade300);
+              },
+              icon: Icon(
+                Icons.info_outline,
+                size: 20,
+                key: bubbleKey,
               ),
             ),
-            data: (prizes) {
-              return GridView.builder(
-                shrinkWrap: true,
-                itemCount: prizes.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
-                itemBuilder: (context, index) {
-                  final ModelPrize prize = prizes[index];
-                  return StorePrizeCard(
-                    title: prize.type,
-                    prizeDeactivated: prize.iconDeactivated,
-                    prizeActivated: prize.iconActivated,
-                    prizePrice: prize.price,
-                    state: state,
-                  );
-                },
-              );
-            },
+          ],
+        ),
+        prizes.when(
+          error: (error, stacktrace) => Text('error: $error'),
+          loading: () => Center(
+            child: CircularProgressIndicator(
+              color: theme.colorScheme.secondary,
+            ),
           ),
-        ],
-      ),
+          data: (prizes) {
+            return GridView.builder(
+              shrinkWrap: true,
+              itemCount: prizes.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+              ),
+              itemBuilder: (context, index) {
+                final ModelPrize prize = prizes[index];
+                return StorePrizeCard(
+                  title: prize.type,
+                  prizeDeactivated: prize.iconDeactivated,
+                  prizeActivated: prize.iconActivated,
+                  prizePrice: prize.price,
+                  state: state,
+                );
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 }
