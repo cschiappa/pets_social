@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -131,21 +132,6 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
         });
   }
 
-//CLEAR IMAGE AFTER POSTING
-  void clearImage() {
-    setState(() {
-      _file = null;
-      _descriptionController.clear();
-    });
-    context.goNamed(AppRouter.feedScreen.name);
-  }
-
-  @override
-  void dispose() {
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = ref.watch(userProvider);
@@ -168,10 +154,9 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
         : Scaffold(
             appBar: AppBar(
               backgroundColor: theme.appBarTheme.backgroundColor,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: clearImage,
-              ),
+              leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () {}
+                  //clearImage,
+                  ),
               title: Text(LocaleKeys.postTo.tr()),
               actions: [
                 TextButton(
@@ -207,20 +192,29 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
                       ),
                 const Divider(),
                 SizedBox(
-                    child: _file!.isEmpty || _file![0] == 255
+                    child: _file![0] == 255
                         ? Container(
-                            constraints: const BoxConstraints(maxHeight: 600),
+                            width: double.infinity,
+                            constraints: const BoxConstraints(maxHeight: 550),
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                color: Colors.black,
-                                image: DecorationImage(
-                                  image: MemoryImage(_file!),
-                                  fit: BoxFit.cover,
-                                  alignment: FractionalOffset.topCenter,
-                                )),
+                              borderRadius: BorderRadius.circular(20.0),
+                              color: Colors.black,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.file(
+                                File(_filePath!),
+                                fit: BoxFit.fitWidth,
+                              ),
+                            ),
                           )
                         : Container(
+                            //width: double.infinity,
                             constraints: const BoxConstraints(maxHeight: 600),
+                            // decoration: BoxDecoration(
+                            //   borderRadius: BorderRadius.circular(20.0),
+                            //   color: Colors.black,
+                            // ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20.0),
                               child: () {
@@ -257,4 +251,147 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
             ),
           );
   }
+
+  //   //CLEAR IMAGE AFTER POSTING
+  void clearImage() {
+    setState(() {
+      _file = null;
+      _descriptionController.clear();
+    });
+    context.goNamed(AppRouter.feedScreen.name);
+  }
 }
+
+// class ConfirmPostScreen extends ConsumerStatefulWidget {
+//   const ConfirmPostScreen({super.key});
+
+//   @override
+//   ConsumerState<ConsumerStatefulWidget> createState() => _ConfirmPostScreenState();
+// }
+
+// class _ConfirmPostScreenState extends ConsumerState<ConfirmPostScreen> {
+//   bool isImageFilled = true;
+//   final TextEditingController descriptionController = TextEditingController();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final ModelProfile? profile = ref.watch(userProvider);
+//     final ThemeData theme = Theme.of(context);
+
+//     ref.listen<AsyncValue>(
+//       postControllerProvider,
+//       (_, state) => state.showSnackbarOnError(context),
+//     );
+
+
+//     final AsyncValue<void> state = ref.watch(postControllerProvider);
+//     return Scaffold(
+//       appBar: AppBar(
+//         backgroundColor: theme.appBarTheme.backgroundColor,
+//         leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () {}
+//             //clearImage,
+//             ),
+//         title: Text(LocaleKeys.postTo.tr()),
+//         actions: [
+//           TextButton(
+//               onPressed: () async {
+                
+//                   await ref.read(postControllerProvider.notifier).uploadPost(
+//                             FirebaseAuth.instance.currentUser!.uid,
+//                             _descriptionController.text,
+//                             _file!,
+//                             profile!.profileUid,
+//                             profile.username,
+//                             profile.photoUrl ?? "",
+//                             _fileType!,
+//                             _thumbnail!,
+//                           );
+//                       clearImage();
+//               },
+//               child: Text(LocaleKeys.post.tr(),
+//                   style: TextStyle(
+//                     color: theme.colorScheme.secondary,
+//                     fontWeight: FontWeight.bold,
+//                     fontSize: 16,
+//                   )))
+//         ],
+//       ),
+//       body: SingleChildScrollView(
+//         child: Column(children: [
+//           state.isLoading
+//               ? LinearProgressIndicator(
+//                   color: theme.colorScheme.secondary,
+//                 )
+//               : const Padding(
+//                   padding: EdgeInsets.only(top: 0),
+//                 ),
+//           const Divider(),
+//           SizedBox(
+//               child: getContentTypeFromUrl(widget.videoFileType) != 'video'
+//                   ? Container(
+//                       width: double.infinity,
+//                       constraints: const BoxConstraints(maxHeight: 550),
+//                       decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(20.0),
+//                         color: Colors.black,
+//                       ),
+//                       child: ClipRRect(
+//                         borderRadius: BorderRadius.circular(20.0),
+//                         child: Image.file(
+//                           File(_filePath!),
+//                           fit: BoxFit.fitWidth,
+//                         ),
+//                       ),
+//                     )
+//                   : Container(
+//                       width: double.infinity,
+//                       constraints: const BoxConstraints(maxHeight: 600),
+//                       decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(20.0),
+//                         color: Colors.black,
+//                       ),
+//                       child: ClipRRect(
+//                         borderRadius: BorderRadius.circular(20.0),
+//                         child: () {
+//                           return VideoPlayerWidget(videoUrl: Uri.parse(_filePath!));
+//                         }(),
+//                       ),
+//                     )),
+//           Padding(
+//             padding: const EdgeInsets.all(20.0),
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.start,
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 CircleAvatar(
+//                   backgroundImage: (profile != null && profile.photoUrl != null) ? NetworkImage(profile.photoUrl!) : const AssetImage('assets/images/default_pic') as ImageProvider<Object>,
+//                 ),
+//                 const SizedBox(
+//                   width: 20,
+//                 ),
+//                 Expanded(
+//                   child: TextField(
+//                     controller: descriptionController,
+//                     decoration: InputDecoration(
+//                       hintText: LocaleKeys.writeCaption.tr(),
+//                       border: InputBorder.none,
+//                     ),
+//                     maxLines: 8,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           )
+//         ]),
+//       ),
+//     );
+//   }
+
+
+
+//   @override
+//   void dispose() {
+//     descriptionController.dispose();
+//     super.dispose();
+//   }
+// }

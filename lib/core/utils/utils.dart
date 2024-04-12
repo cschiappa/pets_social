@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -71,18 +72,18 @@ String getContentTypeFromUrl(fileType) {
     'jfif',
     'svg',
   ];
+  if (fileType != null) {
+    if (imageExtensions.contains(fileType.contains('/') ? fileType.split('/')[1] : fileType.split('.')[1])) {
+      return 'image';
+    }
 
-  if (imageExtensions.contains(fileType.contains('/') ? fileType.split('/')[1] : fileType.split('.')[1])) {
-    return 'image';
+    // Check if the URL ends with a known video file extension
+    final videoExtensions = ['mp4', 'avi', 'mov', 'mkv', 'webm', 'gif'];
+
+    if (videoExtensions.contains(fileType.contains('/') ? fileType.split('/')[1] : fileType.split('.')[1])) {
+      return 'video';
+    }
   }
-
-  // Check if the URL ends with a known video file extension
-  final videoExtensions = ['mp4', 'avi', 'mov', 'mkv', 'webm', 'gif'];
-
-  if (videoExtensions.contains(fileType.contains('/') ? fileType.split('/')[1] : fileType.split('.')[1])) {
-    return 'video';
-  }
-
   // If no match is found
   return 'unknown';
 }
@@ -105,4 +106,31 @@ String cropMessage(String message, int maxLetters) {
 
 int parseStringToInt(String value) {
   return int.tryParse(value) ?? 0;
+}
+
+class ImageCropperCustom extends ImageCropper {
+  @override
+  Future<CroppedFile?> cropImage({
+    required String sourcePath,
+    int? maxWidth,
+    int? maxHeight,
+    CropAspectRatio? aspectRatio,
+    List<CropAspectRatioPreset> aspectRatioPresets = const [CropAspectRatioPreset.original, CropAspectRatioPreset.square, CropAspectRatioPreset.ratio3x2, CropAspectRatioPreset.ratio4x3, CropAspectRatioPreset.ratio16x9],
+    CropStyle cropStyle = CropStyle.rectangle,
+    ImageCompressFormat compressFormat = ImageCompressFormat.jpg,
+    int compressQuality = 90,
+    List<PlatformUiSettings>? uiSettings,
+  }) {
+    return ImageCropper.platform.cropImage(
+      sourcePath: sourcePath,
+      maxWidth: maxWidth,
+      maxHeight: maxHeight,
+      aspectRatio: aspectRatio,
+      aspectRatioPresets: aspectRatioPresets,
+      cropStyle: cropStyle,
+      compressFormat: compressFormat,
+      compressQuality: compressQuality,
+      uiSettings: uiSettings,
+    );
+  }
 }

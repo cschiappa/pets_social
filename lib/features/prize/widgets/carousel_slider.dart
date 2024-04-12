@@ -35,7 +35,7 @@ class _PrizesCarouselSliderState extends State<PrizesCarouselSlider> {
       builder: (context, ref, child) {
         return Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 4.5,
+            horizontal: MediaQuery.of(context).size.width / 4,
           ),
           child: Container(
             padding: const EdgeInsets.all(2.0),
@@ -70,6 +70,7 @@ class _PrizesCarouselSliderState extends State<PrizesCarouselSlider> {
                                 Image.network(prize.iconDeactivated),
                                 const Text(
                                   'Unlock',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 )
                               ]),
                             )

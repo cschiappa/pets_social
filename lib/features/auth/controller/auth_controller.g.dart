@@ -79,7 +79,7 @@ final isEmailVerifiedProvider = Provider<bool?>.internal(
 );
 
 typedef IsEmailVerifiedRef = ProviderRef<bool?>;
-String _$authControllerHash() => r'1b78505d508784145c2da848ea016103833d00c5';
+String _$authControllerHash() => r'f0f1123917acd20d3b11c3c8fe9c6db0d9cb45f1';
 
 /// See also [AuthController].
 @ProviderFor(AuthController)

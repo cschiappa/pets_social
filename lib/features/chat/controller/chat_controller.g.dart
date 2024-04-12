@@ -514,7 +514,7 @@ class _GetLastMessageProviderElement
   String get senderUid => (origin as GetLastMessageProvider).senderUid;
 }
 
-String _$chatControllerHash() => r'247b8ccfb566eb3a790f5fe624c3e993e43bf166';
+String _$chatControllerHash() => r'08328be3a73bb75aac27e66c78d54f68ac49ac05';
 
 /// See also [ChatController].
 @ProviderFor(ChatController)

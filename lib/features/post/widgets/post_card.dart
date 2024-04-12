@@ -36,6 +36,7 @@ class _PostCardState extends ConsumerState<PostCard> {
   final CarouselController _controller = CarouselController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _summaryController = TextEditingController();
+  bool isMenuOpen = false;
 
   @override
   void initState() {
@@ -109,7 +110,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                       child: Container(
                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: Colors.black),
                         width: double.infinity,
-                        constraints: const BoxConstraints(maxHeight: 600),
+                        constraints: const BoxConstraints(maxHeight: 550),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -121,6 +122,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                     width: double.infinity,
                                     child: CachedNetworkImage(
                                       imageUrl: widget.post.postUrl,
+                                      placeholder: (context, url) => const SizedBox(),
                                       fit: BoxFit.fitWidth,
                                     ),
                                   );
@@ -156,46 +158,57 @@ class _PostCardState extends ConsumerState<PostCard> {
                       ),
                     ),
                     //POST HEADER
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(100, 0, 0, 0),
-                        borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(5),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          //AVATAR
-                          GestureDetector(
-                            onTap: () {
-                              String profileUid = widget.post.profileUid;
-                              profileUid == profile.profileUid
-                                  ? context.goNamed(
-                                      AppRouter.profileScreen.name,
-                                    )
-                                  : context.pushNamed(
-                                      AppRouter.navigateToProfile.name,
-                                      pathParameters: {
-                                        'profileUid': profileUid,
-                                      },
-                                    );
-                            },
-                            child: CircleAvatar(
-                                radius: 15,
-                                backgroundImage: profileFromPost != null
-                                    ? NetworkImage(
-                                        profileFromPost.photoUrl!,
-                                      )
-                                    : null),
-                          ),
-                          //USERNAME
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(100, 0, 0, 0),
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                            ),
+                            padding: const EdgeInsets.all(5),
+                            child: Row(
+                              children: [
+                                //AVATAR
+                                GestureDetector(
+                                  onTap: () {
+                                    String profileUid = widget.post.profileUid;
+                                    profileUid == profile.profileUid
+                                        ? context.goNamed(
+                                            AppRouter.profileScreen.name,
+                                          )
+                                        : context.pushNamed(
+                                            AppRouter.navigateToProfile.name,
+                                            pathParameters: {
+                                              'profileUid': profileUid,
+                                            },
+                                          );
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.pink.shade300,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundImage: profileFromPost != null
+                                            ? NetworkImage(
+                                                profileFromPost.photoUrl!,
+                                              )
+                                            : null),
+                                  ),
+                                ),
+                                //USERNAME
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: GestureDetector(
                                     onTap: () {
                                       String profileUid = widget.post.profileUid;
 
@@ -219,179 +232,211 @@ class _PostCardState extends ConsumerState<PostCard> {
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          //ICONS
-                          Expanded(
-                              child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                //COMMENT
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: InkWell(
-                                    onTap: () => context.pushNamed(
-                                      AppRouter.commentsFromFeed.name,
-                                      extra: widget.post,
-                                      pathParameters: {
-                                        'postId': widget.post.postId,
-                                        'profileUid': widget.post.profileUid,
-                                        'username': profileFromPost!.username,
-                                      },
-                                    ),
-                                    child: Image.asset(
-                                      'assets/images/comment.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                  ),
-                                ),
-                                //SHARE
-                                InkWell(
-                                  onTap: () async {
-                                    String path = 'cschiappa.github.io/search/post/${widget.post.postId}/${widget.post.profileUid}/${profileFromPost!.username}';
-                                    await Share.share(path, subject: 'Pets Social Link'
-                                        //sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-                                        );
-                                  },
-                                  child: Icon(
-                                    Icons.share,
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                ),
-                                //BOOKMARK
-                                savedPostsStream.when(
-                                  error: (error, stackTrace) => Text('Error: $error'),
-                                  loading: () => const SizedBox(),
-                                  data: (savedPosts) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                                      child: InkWell(
-                                        onTap: () async {
-                                          await ref.read(postControllerProvider.notifier).savePost(widget.post.postId, savedPosts);
-                                        },
-                                        child: Icon(
-                                          savedPosts.contains(widget.post.postId) ? Icons.bookmark : Icons.bookmark_border,
-                                          color: theme.colorScheme.primary,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                //3 DOTS
-                                InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => Padding(
-                                        padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.all(0),
-                                        child: Dialog(
-                                          child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-                                            return ListView(
-                                              padding: const EdgeInsets.symmetric(vertical: 16),
-                                              shrinkWrap: true,
-                                              children: [
-                                                if (widget.post.profileUid == profile.profileUid)
-                                                  InkWell(
-                                                    onTap: () {
-                                                      _editPostBottomSheet(context, state);
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                      child: Text(
-                                                        LocaleKeys.edit.tr(),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                widget.post.profileUid == profile.profileUid
-                                                    //DELETE OPTION FOR USER POST
-                                                    ? InkWell(
-                                                        onTap: () async {
-                                                          Navigator.of(context).pop();
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return AlertDialog(
-                                                                title: Text(LocaleKeys.sureDeletePost.tr()),
-                                                                content: Text(LocaleKeys.sureDeletePost2.tr()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () async {
-                                                                      await ref.read(postControllerProvider.notifier).deletePost(widget.post.postId).then((value) => context.pop());
-                                                                    },
-                                                                    child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
-                                                                  ),
-                                                                  TextButton(
-                                                                    onPressed: () {
-                                                                      Navigator.of(context).pop();
-                                                                    },
-                                                                    child: Text(
-                                                                      LocaleKeys.cancel.tr(),
-                                                                      style: const TextStyle(fontSize: 16),
-                                                                    ),
-                                                                  )
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                        child: Container(
-                                                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                          child: Text(LocaleKeys.delete.tr()),
-                                                        ),
-                                                      )
-                                                    //BLOCK OPTION FOR OTHER'S POSTS
-                                                    : isBlocked
-                                                        ? InkWell(
-                                                            onTap: () async {
-                                                              Navigator.pop(context);
-                                                              ref.watch(userProvider.notifier).unblockProfile(widget.post.profileUid);
-                                                            },
-                                                            child: Container(
-                                                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                              child: Text(LocaleKeys.unblockProfile.tr()),
-                                                            ),
-                                                          )
-                                                        : InkWell(
-                                                            onTap: () async {
-                                                              Navigator.pop(context);
-                                                              ref.watch(userProvider.notifier).blockProfile(widget.post.profileUid);
-                                                            },
-                                                            child: Container(
-                                                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                              child: Text(LocaleKeys.blockProfile.tr()),
-                                                            ),
-                                                          ),
-                                                if (widget.post.profileUid != profile.profileUid)
-                                                  InkWell(
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                      _showReportBottomSheet(context, state);
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                      child: Text(LocaleKeys.report.tr()),
-                                                    ),
-                                                  ),
-                                              ],
-                                            );
-                                          }),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Icon(
-                                    Icons.more_vert,
-                                    color: theme.colorScheme.primary,
-                                  ),
                                 ),
                               ],
                             ),
-                          )),
+                          ),
+
+                          //ICONS
+                          Row(
+                            children: [
+                              if (isMenuOpen)
+                                GestureDetector(
+                                  onTap: () => setState(() {
+                                    isMenuOpen = !isMenuOpen;
+                                  }),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        color: Color.fromARGB(100, 0, 0, 0),
+                                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                                      ),
+                                      padding: const EdgeInsets.all(2),
+                                      child: const Icon(
+                                        Icons.double_arrow_rounded,
+                                        size: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              Container(
+                                  decoration: const BoxDecoration(
+                                    color: Color.fromARGB(100, 0, 0, 0),
+                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                  padding: const EdgeInsets.all(5),
+                                  child: isMenuOpen == false
+                                      ? GestureDetector(
+                                          onTap: () => setState(() {
+                                                isMenuOpen = !isMenuOpen;
+                                              }),
+                                          child: Transform.flip(flipX: true, child: const Icon(Icons.double_arrow_rounded)))
+                                      : Row(
+                                          children: [
+                                            //COMMENT
+                                            Padding(
+                                              padding: const EdgeInsets.all(5),
+                                              child: InkWell(
+                                                onTap: () => context.pushNamed(
+                                                  AppRouter.commentsFromFeed.name,
+                                                  extra: widget.post,
+                                                  pathParameters: {
+                                                    'postId': widget.post.postId,
+                                                    'profileUid': widget.post.profileUid,
+                                                    'username': profileFromPost!.username,
+                                                  },
+                                                ),
+                                                child: Image.asset(
+                                                  'assets/images/comment.png',
+                                                  width: 24,
+                                                  height: 24,
+                                                ),
+                                              ),
+                                            ),
+                                            //SHARE
+                                            InkWell(
+                                              onTap: () async {
+                                                String path = 'cschiappa.github.io/search/post/${widget.post.postId}/${widget.post.profileUid}/${profileFromPost!.username}';
+                                                await Share.share(path, subject: 'Pets Social Link'
+                                                    //sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+                                                    );
+                                              },
+                                              child: Icon(
+                                                Icons.share,
+                                                color: theme.colorScheme.primary,
+                                              ),
+                                            ),
+                                            //BOOKMARK
+                                            savedPostsStream.when(
+                                              error: (error, stackTrace) => Text('Error: $error'),
+                                              loading: () => const SizedBox(),
+                                              data: (savedPosts) {
+                                                return Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                  child: InkWell(
+                                                    onTap: () async {
+                                                      await ref.read(postControllerProvider.notifier).savePost(widget.post.postId, savedPosts);
+                                                    },
+                                                    child: Icon(
+                                                      savedPosts.contains(widget.post.postId) ? Icons.bookmark : Icons.bookmark_border,
+                                                      color: theme.colorScheme.primary,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            //3 DOTS
+                                            InkWell(
+                                              onTap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) => Padding(
+                                                    padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.all(0),
+                                                    child: Dialog(
+                                                      child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+                                                        return ListView(
+                                                          padding: const EdgeInsets.symmetric(vertical: 16),
+                                                          shrinkWrap: true,
+                                                          children: [
+                                                            if (widget.post.profileUid == profile.profileUid)
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  _editPostBottomSheet(context, state);
+                                                                },
+                                                                child: Container(
+                                                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                  child: Text(
+                                                                    LocaleKeys.edit.tr(),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            widget.post.profileUid == profile.profileUid
+                                                                //DELETE OPTION FOR USER POST
+                                                                ? InkWell(
+                                                                    onTap: () async {
+                                                                      Navigator.of(context).pop();
+                                                                      showDialog(
+                                                                        context: context,
+                                                                        builder: (context) {
+                                                                          return AlertDialog(
+                                                                            title: Text(LocaleKeys.sureDeletePost.tr()),
+                                                                            content: Text(LocaleKeys.sureDeletePost2.tr()),
+                                                                            actions: [
+                                                                              TextButton(
+                                                                                onPressed: () async {
+                                                                                  await ref.read(postControllerProvider.notifier).deletePost(widget.post.postId).then((value) => context.pop());
+                                                                                },
+                                                                                child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
+                                                                              ),
+                                                                              TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.of(context).pop();
+                                                                                },
+                                                                                child: Text(
+                                                                                  LocaleKeys.cancel.tr(),
+                                                                                  style: const TextStyle(fontSize: 16),
+                                                                                ),
+                                                                              )
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                    child: Container(
+                                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                      child: Text(LocaleKeys.delete.tr()),
+                                                                    ),
+                                                                  )
+                                                                //BLOCK OPTION FOR OTHER'S POSTS
+                                                                : isBlocked
+                                                                    ? InkWell(
+                                                                        onTap: () async {
+                                                                          Navigator.pop(context);
+                                                                          ref.watch(userProvider.notifier).unblockProfile(widget.post.profileUid);
+                                                                        },
+                                                                        child: Container(
+                                                                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                          child: Text(LocaleKeys.unblockProfile.tr()),
+                                                                        ),
+                                                                      )
+                                                                    : InkWell(
+                                                                        onTap: () async {
+                                                                          Navigator.pop(context);
+                                                                          ref.watch(userProvider.notifier).blockProfile(widget.post.profileUid);
+                                                                        },
+                                                                        child: Container(
+                                                                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                          child: Text(LocaleKeys.blockProfile.tr()),
+                                                                        ),
+                                                                      ),
+                                                            if (widget.post.profileUid != profile.profileUid)
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  Navigator.pop(context);
+                                                                  _showReportBottomSheet(context, state);
+                                                                },
+                                                                child: Container(
+                                                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                  child: Text(LocaleKeys.report.tr()),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        );
+                                                      }),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Icon(
+                                                Icons.more_vert,
+                                                color: theme.colorScheme.primary,
+                                              ),
+                                            ),
+                                          ],
+                                        )),
+                            ],
+                          )
                         ],
                       ),
                     ),
