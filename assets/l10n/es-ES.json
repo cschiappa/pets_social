@@ -26,6 +26,8 @@
     "tagsUpdatedSuccessfully": "¡Etiquetas actualizadas exitosamente!",
 
     "removePicture": "Eliminar imagen",
+    "areYouSureYouWantToDoThis": "¿Estás seguro de que quieres hacer esto?",
+    "ifYouLeaveEverythingWillBeLost": "Si abandonas esta página, se perderán todos tus cambios.",
 
     "verifyEmail": "¡Verifica tu dirección de correo electrónico!",
     "reachedLastStep": "¡Felicidades! ¡Has llegado al último paso!",

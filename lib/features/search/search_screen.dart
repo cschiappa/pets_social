@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -139,13 +140,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       }
 
                       return MasonryGridView.builder(
+                        //shrinkWrap: true,
                         itemCount: postsState.length,
+                        //cacheExtent: 1000,
                         itemBuilder: (context, index) {
                           ModelPost postIndex = postsState[index];
                           final getProfiles = ref.watch(getProfileFromPostProvider(postsState[index].profileUid));
 
                           return getProfiles.when(
-                              loading: () => Container(),
+                              loading: () => SizedBox(),
                               error: (error, stackTrace) => Text('Error: $error'),
                               data: (getProfiles) {
                                 Widget mediaWidget;
@@ -154,18 +157,24 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                 if (contentType == 'video') {
                                   mediaWidget = ClipRRect(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    child: Image(
-                                      image: NetworkImage(postIndex.videoThumbnail),
-                                      fit: BoxFit.cover,
+                                    child: CachedNetworkImage(
+                                      imageUrl: postIndex.videoThumbnail,
+                                      fit: BoxFit.fitWidth,
+                                      placeholder: (context, url) => Container(
+                                        color: Colors.amber,
+                                      ),
                                     ),
                                   );
                                   //return image
                                 } else if (contentType == 'image') {
                                   mediaWidget = ClipRRect(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    child: Image(
-                                      image: NetworkImage(postIndex.postUrl),
+                                    child: CachedNetworkImage(
+                                      imageUrl: postIndex.postUrl,
                                       fit: BoxFit.fitWidth,
+                                      placeholder: (context, url) => Container(
+                                        color: Colors.amber,
+                                      ),
                                     ),
                                   );
                                 } else {

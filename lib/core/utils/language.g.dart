@@ -27,6 +27,8 @@ abstract class  LocaleKeys {
   static const profileCreated = 'profileCreated';
   static const tagsUpdatedSuccessfully = 'tagsUpdatedSuccessfully';
   static const removePicture = 'removePicture';
+  static const areYouSureYouWantToDoThis = 'areYouSureYouWantToDoThis';
+  static const ifYouLeaveEverythingWillBeLost = 'ifYouLeaveEverythingWillBeLost';
   static const verifyEmail = 'verifyEmail';
   static const reachedLastStep = 'reachedLastStep';
   static const tryAgainLinkText = 'tryAgainLinkText';

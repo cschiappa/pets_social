@@ -26,6 +26,8 @@
     "tagsUpdatedSuccessfully": "Tags updated successfully!",
 
     "removePicture": "Remove Picture",
+    "areYouSureYouWantToDoThis": "Are you sure you want to do this?",
+    "ifYouLeaveEverythingWillBeLost": "If you leave this page all your changes will be lost.",
 
     "verifyEmail": "Verify your email address!",
     "reachedLastStep": "Congratulations! You have reached the last step!",

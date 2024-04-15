@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,22 +29,14 @@ PostRepository postRepository(PostRepositoryRef ref) {
   );
 }
 
+//HEADER MENU STATE
+final isMenuOpenProvider = StateProvider<bool>((ref) => false);
+
 //SHOW/HIDE DESCRIPTION
 final showDescriptionProvider = StateProvider<bool>((ref) => false);
 
 //TEMPORARY SAVE PICTURE
 final temporaryPicture = StateProvider.autoDispose<String?>((ref) => null);
-
-// class NewPost {
-//   CroppedFile? file;
-//   String fileType;
-//   Uint8List thumbnail;
-//   String? filePath;
-
-//   NewPost({this.file, required this.fileType, required this.thumbnail, this.filePath});
-// }
-
-// final newPostProvider = StateProvider<NewPost?>((ref) => null);
 
 //GET ALL POSTS IN DESCENDING
 @riverpod

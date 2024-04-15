@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
+import 'package:pets_social/features/post/widgets/open_menu_animation.dart';
 import 'package:pets_social/features/prize/widgets/prize_animation.dart';
 import 'package:pets_social/features/prize/widgets/prize_list.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
@@ -36,7 +38,7 @@ class _PostCardState extends ConsumerState<PostCard> {
   final CarouselController _controller = CarouselController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _summaryController = TextEditingController();
-  bool isMenuOpen = false;
+  //bool isMenuOpen = false;
 
   @override
   void initState() {
@@ -66,6 +68,8 @@ class _PostCardState extends ConsumerState<PostCard> {
     final profileFromPost = ref.watch(getProfileFromPostProvider(widget.post.profileUid)).value;
     final commentsNumber = ref.watch(getCommentsNumberProvider(widget.post.postId));
     final savedPostsStream = ref.watch(savedPostsStreamProvider);
+
+    bool isMenuOpen = ref.watch(isMenuOpenProvider);
 
     ref.listen<AsyncValue>(
       postControllerProvider,
@@ -236,15 +240,13 @@ class _PostCardState extends ConsumerState<PostCard> {
                               ],
                             ),
                           ),
-
-                          //ICONS
+                          //ICONS MENU
                           Row(
                             children: [
+                              //DOUBLE ARROW FOR CLOSE MENU
                               if (isMenuOpen)
                                 GestureDetector(
-                                  onTap: () => setState(() {
-                                    isMenuOpen = !isMenuOpen;
-                                  }),
+                                  onTap: () => ref.read(isMenuOpenProvider.notifier).state = !isMenuOpen,
                                   child: Padding(
                                     padding: const EdgeInsets.all(5),
                                     child: Container(
@@ -260,181 +262,186 @@ class _PostCardState extends ConsumerState<PostCard> {
                                     ),
                                   ),
                                 ),
+                              //MENU
                               Container(
-                                  decoration: const BoxDecoration(
-                                    color: Color.fromARGB(100, 0, 0, 0),
-                                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                                  ),
-                                  padding: const EdgeInsets.all(5),
-                                  child: isMenuOpen == false
-                                      ? GestureDetector(
-                                          onTap: () => setState(() {
-                                                isMenuOpen = !isMenuOpen;
-                                              }),
-                                          child: Transform.flip(flipX: true, child: const Icon(Icons.double_arrow_rounded)))
-                                      : Row(
-                                          children: [
-                                            //COMMENT
-                                            Padding(
-                                              padding: const EdgeInsets.all(5),
-                                              child: InkWell(
-                                                onTap: () => context.pushNamed(
-                                                  AppRouter.commentsFromFeed.name,
-                                                  extra: widget.post,
-                                                  pathParameters: {
-                                                    'postId': widget.post.postId,
-                                                    'profileUid': widget.post.profileUid,
-                                                    'username': profileFromPost!.username,
+                                decoration: const BoxDecoration(
+                                  color: Color.fromARGB(100, 0, 0, 0),
+                                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                                ),
+                                padding: const EdgeInsets.all(5),
+                                child: isMenuOpen == false
+                                    //DOUBLE ARROW TO OPEN MENU
+                                    ? GestureDetector(
+                                        onTap: () => ref.read(isMenuOpenProvider.notifier).state = !isMenuOpen,
+                                        child: Transform.flip(
+                                          flipX: true,
+                                          child: const Icon(Icons.double_arrow_rounded),
+                                        ),
+                                      )
+                                    : Row(
+                                        children: [
+                                          //COMMENT
+                                          Padding(
+                                            padding: const EdgeInsets.all(5),
+                                            child: InkWell(
+                                              onTap: () => context.pushNamed(
+                                                AppRouter.commentsFromFeed.name,
+                                                extra: widget.post,
+                                                pathParameters: {
+                                                  'postId': widget.post.postId,
+                                                  'profileUid': widget.post.profileUid,
+                                                  'username': profileFromPost!.username,
+                                                },
+                                              ),
+                                              child: Image.asset(
+                                                'assets/images/comment.png',
+                                                width: 24,
+                                                height: 24,
+                                              ),
+                                            ),
+                                          ),
+                                          //SHARE
+                                          InkWell(
+                                            onTap: () async {
+                                              String path = 'cschiappa.github.io/search/post/${widget.post.postId}/${widget.post.profileUid}/${profileFromPost!.username}';
+                                              await Share.share(path, subject: 'Pets Social Link'
+                                                  //sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+                                                  );
+                                            },
+                                            child: Icon(
+                                              Icons.share,
+                                              color: theme.colorScheme.primary,
+                                            ),
+                                          ),
+                                          //BOOKMARK
+                                          savedPostsStream.when(
+                                            error: (error, stackTrace) => Text('Error: $error'),
+                                            loading: () => const SizedBox(),
+                                            data: (savedPosts) {
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                child: InkWell(
+                                                  onTap: () async {
+                                                    await ref.read(postControllerProvider.notifier).savePost(widget.post.postId, savedPosts);
                                                   },
-                                                ),
-                                                child: Image.asset(
-                                                  'assets/images/comment.png',
-                                                  width: 24,
-                                                  height: 24,
-                                                ),
-                                              ),
-                                            ),
-                                            //SHARE
-                                            InkWell(
-                                              onTap: () async {
-                                                String path = 'cschiappa.github.io/search/post/${widget.post.postId}/${widget.post.profileUid}/${profileFromPost!.username}';
-                                                await Share.share(path, subject: 'Pets Social Link'
-                                                    //sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-                                                    );
-                                              },
-                                              child: Icon(
-                                                Icons.share,
-                                                color: theme.colorScheme.primary,
-                                              ),
-                                            ),
-                                            //BOOKMARK
-                                            savedPostsStream.when(
-                                              error: (error, stackTrace) => Text('Error: $error'),
-                                              loading: () => const SizedBox(),
-                                              data: (savedPosts) {
-                                                return Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                  child: InkWell(
-                                                    onTap: () async {
-                                                      await ref.read(postControllerProvider.notifier).savePost(widget.post.postId, savedPosts);
-                                                    },
-                                                    child: Icon(
-                                                      savedPosts.contains(widget.post.postId) ? Icons.bookmark : Icons.bookmark_border,
-                                                      color: theme.colorScheme.primary,
-                                                    ),
+                                                  child: Icon(
+                                                    savedPosts.contains(widget.post.postId) ? Icons.bookmark : Icons.bookmark_border,
+                                                    color: theme.colorScheme.primary,
                                                   ),
-                                                );
-                                              },
-                                            ),
-                                            //3 DOTS
-                                            InkWell(
-                                              onTap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) => Padding(
-                                                    padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.all(0),
-                                                    child: Dialog(
-                                                      child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-                                                        return ListView(
-                                                          padding: const EdgeInsets.symmetric(vertical: 16),
-                                                          shrinkWrap: true,
-                                                          children: [
-                                                            if (widget.post.profileUid == profile.profileUid)
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  _editPostBottomSheet(context, state);
-                                                                },
-                                                                child: Container(
-                                                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                                  child: Text(
-                                                                    LocaleKeys.edit.tr(),
-                                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          //3 DOTS
+                                          InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => Padding(
+                                                  padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.all(0),
+                                                  child: Dialog(
+                                                    child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+                                                      return ListView(
+                                                        padding: const EdgeInsets.symmetric(vertical: 16),
+                                                        shrinkWrap: true,
+                                                        children: [
+                                                          if (widget.post.profileUid == profile.profileUid)
+                                                            InkWell(
+                                                              onTap: () {
+                                                                _editPostBottomSheet(context, state);
+                                                              },
+                                                              child: Container(
+                                                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                child: Text(
+                                                                  LocaleKeys.edit.tr(),
                                                                 ),
                                                               ),
-                                                            widget.post.profileUid == profile.profileUid
-                                                                //DELETE OPTION FOR USER POST
-                                                                ? InkWell(
-                                                                    onTap: () async {
-                                                                      Navigator.of(context).pop();
-                                                                      showDialog(
-                                                                        context: context,
-                                                                        builder: (context) {
-                                                                          return AlertDialog(
-                                                                            title: Text(LocaleKeys.sureDeletePost.tr()),
-                                                                            content: Text(LocaleKeys.sureDeletePost2.tr()),
-                                                                            actions: [
-                                                                              TextButton(
-                                                                                onPressed: () async {
-                                                                                  await ref.read(postControllerProvider.notifier).deletePost(widget.post.postId).then((value) => context.pop());
-                                                                                },
-                                                                                child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
+                                                            ),
+                                                          widget.post.profileUid == profile.profileUid
+                                                              //DELETE OPTION FOR USER POST
+                                                              ? InkWell(
+                                                                  onTap: () async {
+                                                                    Navigator.of(context).pop();
+                                                                    showDialog(
+                                                                      context: context,
+                                                                      builder: (context) {
+                                                                        return AlertDialog(
+                                                                          title: Text(LocaleKeys.sureDeletePost.tr()),
+                                                                          content: Text(LocaleKeys.sureDeletePost2.tr()),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              onPressed: () async {
+                                                                                await ref.read(postControllerProvider.notifier).deletePost(widget.post.postId).then((value) => context.pop());
+                                                                              },
+                                                                              child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
+                                                                            ),
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                              },
+                                                                              child: Text(
+                                                                                LocaleKeys.cancel.tr(),
+                                                                                style: const TextStyle(fontSize: 16),
                                                                               ),
-                                                                              TextButton(
-                                                                                onPressed: () {
-                                                                                  Navigator.of(context).pop();
-                                                                                },
-                                                                                child: Text(
-                                                                                  LocaleKeys.cancel.tr(),
-                                                                                  style: const TextStyle(fontSize: 16),
-                                                                                ),
-                                                                              )
-                                                                            ],
-                                                                          );
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    child: Container(
-                                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                                      child: Text(LocaleKeys.delete.tr()),
-                                                                    ),
-                                                                  )
-                                                                //BLOCK OPTION FOR OTHER'S POSTS
-                                                                : isBlocked
-                                                                    ? InkWell(
-                                                                        onTap: () async {
-                                                                          Navigator.pop(context);
-                                                                          ref.watch(userProvider.notifier).unblockProfile(widget.post.profileUid);
-                                                                        },
-                                                                        child: Container(
-                                                                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                                          child: Text(LocaleKeys.unblockProfile.tr()),
-                                                                        ),
-                                                                      )
-                                                                    : InkWell(
-                                                                        onTap: () async {
-                                                                          Navigator.pop(context);
-                                                                          ref.watch(userProvider.notifier).blockProfile(widget.post.profileUid);
-                                                                        },
-                                                                        child: Container(
-                                                                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                                          child: Text(LocaleKeys.blockProfile.tr()),
-                                                                        ),
+                                                                            )
+                                                                          ],
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  child: Container(
+                                                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                    child: Text(LocaleKeys.delete.tr()),
+                                                                  ),
+                                                                )
+                                                              //BLOCK OPTION FOR OTHER'S POSTS
+                                                              : isBlocked
+                                                                  ? InkWell(
+                                                                      onTap: () async {
+                                                                        Navigator.pop(context);
+                                                                        ref.watch(userProvider.notifier).unblockProfile(widget.post.profileUid);
+                                                                      },
+                                                                      child: Container(
+                                                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                        child: Text(LocaleKeys.unblockProfile.tr()),
                                                                       ),
-                                                            if (widget.post.profileUid != profile.profileUid)
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  Navigator.pop(context);
-                                                                  _showReportBottomSheet(context, state);
-                                                                },
-                                                                child: Container(
-                                                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                                  child: Text(LocaleKeys.report.tr()),
-                                                                ),
+                                                                    )
+                                                                  : InkWell(
+                                                                      onTap: () async {
+                                                                        Navigator.pop(context);
+                                                                        ref.watch(userProvider.notifier).blockProfile(widget.post.profileUid);
+                                                                      },
+                                                                      child: Container(
+                                                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                        child: Text(LocaleKeys.blockProfile.tr()),
+                                                                      ),
+                                                                    ),
+                                                          if (widget.post.profileUid != profile.profileUid)
+                                                            InkWell(
+                                                              onTap: () {
+                                                                Navigator.pop(context);
+                                                                _showReportBottomSheet(context, state);
+                                                              },
+                                                              child: Container(
+                                                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                child: Text(LocaleKeys.report.tr()),
                                                               ),
-                                                          ],
-                                                        );
-                                                      }),
-                                                    ),
+                                                            ),
+                                                        ],
+                                                      );
+                                                    }),
                                                   ),
-                                                );
-                                              },
-                                              child: Icon(
-                                                Icons.more_vert,
-                                                color: theme.colorScheme.primary,
-                                              ),
+                                                ),
+                                              );
+                                            },
+                                            child: Icon(
+                                              Icons.more_vert,
+                                              color: theme.colorScheme.primary,
                                             ),
-                                          ],
-                                        )),
+                                          ),
+                                        ],
+                                      ),
+                              ),
                             ],
                           )
                         ],

@@ -26,6 +26,8 @@
     "tagsUpdatedSuccessfully": "标签更新成功！",
 
     "removePicture": "删除图片",
+    "areYouSureYouWantToDoThis": "您确定要执行此操作吗？",
+    "ifYouLeaveEverythingWillBeLost": "如果您离开此页面，所有更改都将丢失。",
 
     "verifyEmail": "验证你的电子邮件地址！",
     "reachedLastStep": "恭喜！您已经到达最后一步！",

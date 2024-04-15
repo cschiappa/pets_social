@@ -26,6 +26,8 @@
     "tagsUpdatedSuccessfully": "Теги успешно обновлены!",
 
     "removePicture": "Удалить изображение",
+    "areYouSureYouWantToDoThis": "Вы уверены, что хотите это сделать?",
+    "ifYouLeaveEverythingWillBeLost": "Если вы покинете эту страницу, все ваши изменения будут потеряны.",
 
     "verifyEmail": "Подтвердите свой адрес электронной почты!",
     "reachedLastStep": "Поздравляем! Вы достигли последнего шага!",

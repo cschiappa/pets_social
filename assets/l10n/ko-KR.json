@@ -26,6 +26,8 @@
     "tagsUpdatedSuccessfully": "태그가 성공적으로 업데이트되었습니다!",
 
     "removePicture": "사진 제거",
+    "areYouSureYouWantToDoThis": "이 작업을 진행하시겠습니까?",
+    "ifYouLeaveEverythingWillBeLost": "이 페이지를 떠나면 모든 변경 내용이 사라집니다.",
 
     "verifyEmail": "이메일 주소를 확인하세요!",
     "reachedLastStep": "축하합니다! 마지막 단계에 도달했습니다!",

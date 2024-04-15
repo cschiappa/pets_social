@@ -92,132 +92,134 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onRefresh: _handleRefresh,
             child: Container(
               padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 0),
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      //GRADIENT CONTAINER
-                      Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(10.0),
-                            bottomRight: Radius.circular(10.0),
-                          ),
-                          gradient: LinearGradient(
-                            colors: [
-                              Color.fromARGB(255, 157, 110, 157), // Start color
-                              Color.fromARGB(255, 240, 177, 136), // End color
-                            ],
-                          ),
-                        ),
-                        height: 60,
-                      ),
-                      //PROFILE PIC
-                      Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: theme.colorScheme.background,
-                            width: 5.0,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            profileData.photoUrl ?? '',
-                          ),
-                          radius: 40,
-                        ),
-                      ),
-                    ],
-                  ),
-                  //USERNAME
-                  Text(
-                    profileData.username,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  //DESCRIPTION
-                  Text(
-                    profileData.bio ?? '',
-                  ),
-                  //PROFILE STATS ROW
-                  //profileStats(profileData.followers.length),
-                  SizedBox(
-                    height: 50,
-                    child: ProfilePrizeList(
-                      userId: userId,
-                    ),
-                  ),
-                  //SIGN OUT/FOLLOW BUTTON AND SETTINGS WHEEL
-                  signOutButtonAndSettingsRow(profile, theme, profileData),
-                  const Divider(),
-                  //PICTURES GRID
-                  profilePosts.when(
-                      error: (error, stacktrace) => Text('error: $error'),
-                      loading: () => Center(
-                            child: CircularProgressIndicator(
-                              color: theme.colorScheme.secondary,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        //GRADIENT CONTAINER
+                        Container(
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10.0),
+                              bottomRight: Radius.circular(10.0),
+                            ),
+                            gradient: LinearGradient(
+                              colors: [
+                                Color.fromARGB(255, 157, 110, 157), // Start color
+                                Color.fromARGB(255, 240, 177, 136), // End color
+                              ],
                             ),
                           ),
-                      data: (profilePosts) {
-                        return GridView.builder(
-                          shrinkWrap: true,
-                          itemCount: profilePosts.docs.length,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
-                          itemBuilder: (context, index) {
-                            ModelPost post = ModelPost.fromSnap(profilePosts.docs[index]);
+                          height: 60,
+                        ),
+                        //PROFILE PIC
+                        Container(
+                          margin: const EdgeInsets.only(top: 10),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: theme.colorScheme.background,
+                              width: 5.0,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              profileData.photoUrl ?? '',
+                            ),
+                            radius: 40,
+                          ),
+                        ),
+                      ],
+                    ),
+                    //USERNAME
+                    Text(
+                      profileData.username,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    //DESCRIPTION
+                    Text(
+                      profileData.bio ?? '',
+                    ),
+                    //PROFILE STATS ROW
+                    //profileStats(profileData.followers.length),
+                    SizedBox(
+                      height: 50,
+                      child: ProfilePrizeList(
+                        userId: userId,
+                      ),
+                    ),
+                    //SIGN OUT/FOLLOW BUTTON AND SETTINGS WHEEL
+                    signOutButtonAndSettingsRow(profile, theme, profileData),
+                    const Divider(),
+                    //PICTURES GRID
+                    profilePosts.when(
+                        error: (error, stacktrace) => Text('error: $error'),
+                        loading: () => Center(
+                              child: CircularProgressIndicator(
+                                color: theme.colorScheme.secondary,
+                              ),
+                            ),
+                        data: (profilePosts) {
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            itemCount: profilePosts.docs.length,
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 5, mainAxisSpacing: 1.5, childAspectRatio: 1),
+                            itemBuilder: (context, index) {
+                              ModelPost post = ModelPost.fromSnap(profilePosts.docs[index]);
 
-                            Widget mediaWidget;
-                            final String contentType = getContentTypeFromUrl(post.fileType);
-                            //return video
-                            if (contentType == 'video') {
-                              mediaWidget = ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: Image(
-                                  image: NetworkImage(post.videoThumbnail),
-                                  fit: BoxFit.cover,
-                                ),
+                              Widget mediaWidget;
+                              final String contentType = getContentTypeFromUrl(post.fileType);
+                              //return video
+                              if (contentType == 'video') {
+                                mediaWidget = ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image(
+                                    image: NetworkImage(post.videoThumbnail),
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              } else {
+                                // return image
+                                mediaWidget = ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image(
+                                    image: NetworkImage(post.postUrl),
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              }
+                              return GestureDetector(
+                                onTap: () {
+                                  post.profileUid == profile.profileUid
+                                      ? context.goNamed(
+                                          AppRouter.openPostFromProfile.name,
+                                          pathParameters: {
+                                            'postId': post.postId,
+                                            'profileUid': post.profileUid,
+                                            'username': profileData.username,
+                                          },
+                                        )
+                                      : context.goNamed(
+                                          AppRouter.openPostFromFeed.name,
+                                          pathParameters: {
+                                            'postId': post.postId,
+                                            'profileUid': post.profileUid,
+                                            'username': profileData.username,
+                                          },
+                                        );
+                                },
+                                child: mediaWidget,
                               );
-                            } else {
-                              // return image
-                              mediaWidget = ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: Image(
-                                  image: NetworkImage(post.postUrl),
-                                  fit: BoxFit.cover,
-                                ),
-                              );
-                            }
-                            return GestureDetector(
-                              onTap: () {
-                                post.profileUid == profile.profileUid
-                                    ? context.goNamed(
-                                        AppRouter.openPostFromProfile.name,
-                                        pathParameters: {
-                                          'postId': post.postId,
-                                          'profileUid': post.profileUid,
-                                          'username': profileData.username,
-                                        },
-                                      )
-                                    : context.goNamed(
-                                        AppRouter.openPostFromFeed.name,
-                                        pathParameters: {
-                                          'postId': post.postId,
-                                          'profileUid': post.profileUid,
-                                          'username': profileData.username,
-                                        },
-                                      );
-                              },
-                              child: mediaWidget,
-                            );
-                          },
-                        );
-                      })
-                ],
+                            },
+                          );
+                        })
+                  ],
+                ),
               ),
             ),
           ),
