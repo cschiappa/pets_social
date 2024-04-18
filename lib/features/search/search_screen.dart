@@ -143,12 +143,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         //shrinkWrap: true,
                         itemCount: postsState.length,
                         //cacheExtent: 1000,
+                        cacheExtent: 3000,
                         itemBuilder: (context, index) {
                           ModelPost postIndex = postsState[index];
                           final getProfiles = ref.watch(getProfileFromPostProvider(postsState[index].profileUid));
 
                           return getProfiles.when(
-                              loading: () => SizedBox(),
+                              loading: () => const SizedBox(),
                               error: (error, stackTrace) => Text('Error: $error'),
                               data: (getProfiles) {
                                 Widget mediaWidget;
@@ -160,9 +161,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                     child: CachedNetworkImage(
                                       imageUrl: postIndex.videoThumbnail,
                                       fit: BoxFit.fitWidth,
-                                      placeholder: (context, url) => Container(
-                                        color: Colors.amber,
-                                      ),
+                                      placeholder: (context, url) => const SizedBox(),
                                     ),
                                   );
                                   //return image
@@ -172,9 +171,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                     child: CachedNetworkImage(
                                       imageUrl: postIndex.postUrl,
                                       fit: BoxFit.fitWidth,
-                                      placeholder: (context, url) => Container(
-                                        color: Colors.amber,
-                                      ),
+                                      placeholder: (context, url) => const SizedBox(),
                                     ),
                                   );
                                 } else {
