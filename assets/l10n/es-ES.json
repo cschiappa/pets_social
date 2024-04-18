@@ -28,6 +28,10 @@
     "removePicture": "Eliminar imagen",
     "areYouSureYouWantToDoThis": "¿Estás seguro de que quieres hacer esto?",
     "ifYouLeaveEverythingWillBeLost": "Si abandonas esta página, se perderán todos tus cambios.",
+    "whatIsThisStore": "¿Para qué es esta tienda?",
+    "hereYouCanBuyPrizes": "¡Aquí puedes comprar premios geniales para regalar a otros mascotas! ¡Pruébalo ♡",
+    "whyCantIDeleteTheCurrentProfile": "¿Por qué no puedo eliminar el perfil actual?",
+    "youCanDeleteTheCurrentProfileIf": "¡Puedes hacerlo! Pero primero debes estar usando un perfil diferente al que deseas eliminar. Cuando vuelvas a la página de configuración, el botón de eliminar debería estar disponible.",
 
     "verifyEmail": "¡Verifica tu dirección de correo electrónico!",
     "reachedLastStep": "¡Felicidades! ¡Has llegado al último paso!",

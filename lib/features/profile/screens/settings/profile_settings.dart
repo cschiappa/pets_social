@@ -7,10 +7,12 @@ import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
 import 'package:pets_social/core/utils/validators.dart';
+import 'package:pets_social/core/widgets/info_bubble/show_info_bubble.dart';
 import 'package:pets_social/core/widgets/text_field_input.dart';
 import 'package:pets_social/features/auth/controller/auth_controller.dart';
 
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
+import 'package:pets_social/models/profile.dart';
 
 class ProfileSettings extends ConsumerStatefulWidget {
   const ProfileSettings({super.key});
@@ -21,6 +23,7 @@ class ProfileSettings extends ConsumerStatefulWidget {
 
 class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
   final TextEditingController _passwordController = TextEditingController();
+  final bubbleKey2 = GlobalKey();
 
   @override
   void dispose() {
@@ -34,7 +37,22 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
-        title: Text(LocaleKeys.profiles.tr()),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(LocaleKeys.profiles.tr()),
+            IconButton(
+              onPressed: () {
+                showInfoBubble(LocaleKeys.whyCantIDeleteTheCurrentProfile.tr(), LocaleKeys.youCanDeleteTheCurrentProfileIf.tr(), bubbleKey2, Colors.pink.shade300);
+              },
+              icon: Icon(
+                Icons.info_outline,
+                size: 20,
+                key: bubbleKey2,
+              ),
+            ),
+          ],
+        ),
         backgroundColor: theme.appBarTheme.backgroundColor,
       ),
       body: _buildProfileList(),
@@ -62,6 +80,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
   //USER'S PROFILES LIST ITEMS
   Widget _buildProfileListItem(DocumentSnapshot document, bool hasMultipleProfiles) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+    final ModelProfile? profile = ref.watch(userProvider);
 
     ref.listen<AsyncValue>(
       authControllerProvider,
@@ -74,7 +93,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
         backgroundImage: NetworkImage(data['photoUrl']),
       ),
       title: Text(data['username']),
-      trailing: hasMultipleProfiles
+      trailing: hasMultipleProfiles && data['profileUid'] != profile!.profileUid
           ? TextButton(
               child: Text(LocaleKeys.delete.tr()),
               onPressed: () => _deleteProfile(data),
@@ -127,7 +146,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
 
                             if (verifyPassword == true) {
                               await ref.read(profileControllerProvider.notifier).deleteProfile(data['profileUid']).then((value) {
-                                ref.read(userProvider.notifier).disposeProfile();
+                                //ref.read(userProvider.notifier).disposeProfile();
                                 _passwordController.clear();
                                 context.pop();
                                 context.pop();

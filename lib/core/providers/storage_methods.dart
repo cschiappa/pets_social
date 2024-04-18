@@ -19,8 +19,8 @@ class StorageRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //UPLOAD IMAGE TO FIRESTORE
-  Future<String> uploadImageToStorage(String childName, Uint8List file, String id) async {
-    Reference ref = _firebaseStorage.ref().child(childName).child(_auth.currentUser!.uid).child(id);
+  Future<String> uploadImageToStorage(String childName, Uint8List file, String profileUid, String id) async {
+    Reference ref = _firebaseStorage.ref().child(childName).child(_auth.currentUser!.uid).child(profileUid).child(id);
 
     UploadTask uploadTask = ref.putData(file);
 

@@ -46,9 +46,9 @@ class PostRepository {
   ) async {
     String postId = const Uuid().v1();
 
-    String photoUrl = await _storageRepository.uploadImageToStorage('posts', file, postId);
+    String photoUrl = await _storageRepository.uploadImageToStorage('posts', file, profileUid, postId);
 
-    String videoThumbnail = await _storageRepository.uploadImageToStorage('videoThumbnails', thumbnail, postId);
+    String videoThumbnail = await _storageRepository.uploadImageToStorage('videoThumbnails', thumbnail, profileUid, postId);
 
     final String postPath = FirestorePath.post(postId);
 

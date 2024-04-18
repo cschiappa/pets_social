@@ -132,7 +132,7 @@ class ProfileRepository {
       String profileUid = const Uuid().v1();
 
       if (file != null) {
-        photoUrl = await _storageRepository.uploadImageToStorage('profilePics', file, profileUid);
+        photoUrl = await _storageRepository.uploadImageToStorage('profilePics', file, profileUid, profileUid);
       } else {
         photoUrl = 'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
       }
@@ -173,7 +173,7 @@ class ProfileRepository {
     final String photoUrl;
     if (newUsername.length <= 15 && newBio.length <= 150) {
       if (file != null) {
-        photoUrl = await _storageRepository.uploadImageToStorage('profilePics', file, profileUid);
+        photoUrl = await _storageRepository.uploadImageToStorage('profilePics', file, profileUid, profileUid);
 
         await _firestore.doc(profilePath).update({
           'username': newUsername,

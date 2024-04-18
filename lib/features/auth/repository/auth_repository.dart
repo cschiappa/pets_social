@@ -55,7 +55,7 @@ class AuthRepository {
     String profileUid = const Uuid().v1();
 
     if (file != null) {
-      photoUrl = await _storageRepository.uploadImageToStorage('profilePics', file, profileUid);
+      photoUrl = await _storageRepository.uploadImageToStorage('profilePics', file, profileUid, profileUid);
     } else {
       photoUrl = 'https://i.pinimg.com/474x/eb/bb/b4/ebbbb41de744b5ee43107b25bd27c753.jpg';
     }

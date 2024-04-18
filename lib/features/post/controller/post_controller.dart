@@ -175,7 +175,7 @@ class PostController extends _$PostController {
     final profile = ref.read(userProvider)!;
     String commentId = const Uuid().v1();
 
-    ModelComment comment = ModelComment(commentId: commentId, profileUid: profile.profileUid, text: text, datePublished: DateTime.now(), postId: post.postId, username: profile.username, photoUrl: profile.photoUrl!, likes: []);
+    ModelComment comment = ModelComment(commentId: commentId, profileUid: profile.profileUid, uid: profile.uid, text: text, datePublished: DateTime.now(), postId: post.postId, username: profile.username, photoUrl: profile.photoUrl!, likes: []);
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => postRepository.postComment(comment));

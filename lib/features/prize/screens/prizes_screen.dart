@@ -228,7 +228,7 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
             ),
             IconButton(
               onPressed: () {
-                showInfoBubble('Tool tip title', 'Tool tip description it is', bubbleKey, Colors.pink.shade300);
+                showInfoBubble(LocaleKeys.whatIsThisStore.tr(), LocaleKeys.hereYouCanBuyPrizes.tr(), bubbleKey, Colors.pink.shade300);
               },
               icon: Icon(
                 Icons.info_outline,

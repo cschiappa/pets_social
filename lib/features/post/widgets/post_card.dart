@@ -582,7 +582,10 @@ class _PostCardState extends ConsumerState<PostCard> {
                   ),
                   InkWell(
                     onTap: () async {
-                      await ref.read(postControllerProvider.notifier).updatePost(widget.post.postId, _descriptionController.text).then((value) => context.pop());
+                      await ref.read(postControllerProvider.notifier).updatePost(widget.post.postId, _descriptionController.text).then((value) {
+                        context.pop();
+                        context.pop();
+                      });
                     },
                     child: Container(
                       width: double.infinity,

@@ -29,6 +29,10 @@ abstract class  LocaleKeys {
   static const removePicture = 'removePicture';
   static const areYouSureYouWantToDoThis = 'areYouSureYouWantToDoThis';
   static const ifYouLeaveEverythingWillBeLost = 'ifYouLeaveEverythingWillBeLost';
+  static const whatIsThisStore = 'whatIsThisStore';
+  static const hereYouCanBuyPrizes = 'hereYouCanBuyPrizes';
+  static const whyCantIDeleteTheCurrentProfile = 'whyCantIDeleteTheCurrentProfile';
+  static const youCanDeleteTheCurrentProfileIf = 'youCanDeleteTheCurrentProfileIf';
   static const verifyEmail = 'verifyEmail';
   static const reachedLastStep = 'reachedLastStep';
   static const tryAgainLinkText = 'tryAgainLinkText';

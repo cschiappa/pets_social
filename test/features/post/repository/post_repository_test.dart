@@ -121,6 +121,7 @@ void main() {
       const String documentPath = postId;
 
       const String profileUid = 'profileUid';
+      const String uid = 'uid';
       const String text = 'text';
       DateTime dataPublished = DateTime.now();
       const String username = 'username';
@@ -129,7 +130,7 @@ void main() {
       String commentId = const Uuid().v1();
 
       test('Add Comment', () async {
-        ModelComment comment = ModelComment(commentId: commentId, profileUid: profileUid, text: text, datePublished: dataPublished, postId: postId, username: username, photoUrl: photoUrl, likes: likes);
+        ModelComment comment = ModelComment(commentId: commentId, profileUid: profileUid, uid: uid, text: text, datePublished: dataPublished, postId: postId, username: username, photoUrl: photoUrl, likes: likes);
 
         await postRepositoryMock.setDataOnDocument(
           data: comment.toJson(),

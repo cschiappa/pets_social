@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ModelComment {
   final String commentId;
   final String profileUid;
+  final String uid;
   final String text;
   final DateTime datePublished;
   final String postId;
@@ -13,6 +14,7 @@ class ModelComment {
   const ModelComment({
     required this.commentId,
     required this.profileUid,
+    required this.uid,
     required this.text,
     required this.datePublished,
     required this.postId,
@@ -24,6 +26,7 @@ class ModelComment {
   Map<String, dynamic> toJson() => {
         "commentId": commentId,
         "profileUid": profileUid,
+        "uid": uid,
         "text": text,
         "datePublished": datePublished,
         "postId": postId,
@@ -38,6 +41,7 @@ class ModelComment {
     return ModelComment(
       commentId: snapshot['commentId'],
       profileUid: snapshot['profileUid'],
+      uid: snapshot['uid'],
       text: snapshot['text'],
       datePublished: snapshot['datePublished'].toDate(),
       postId: snapshot['postId'],

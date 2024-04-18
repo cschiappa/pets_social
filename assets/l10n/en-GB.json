@@ -28,6 +28,10 @@
     "removePicture": "Remove Picture",
     "areYouSureYouWantToDoThis": "Are you sure you want to do this?",
     "ifYouLeaveEverythingWillBeLost": "If you leave this page all your changes will be lost.",
+    "whatIsThisStore": "What is this store for?",
+    "hereYouCanBuyPrizes": "Here you can buy cool prizes to gift to other pets! Give it a try ♡",
+    "whyCantIDeleteTheCurrentProfile": "Why can't I delete the current profile?",
+    "youCanDeleteTheCurrentProfileIf": "You can! But first you must be using a different profile than the one you want to delete. When you come back to the settings page the delete button should be available.",
 
     "verifyEmail": "Verify your email address!",
     "reachedLastStep": "Congratulations! You have reached the last step!",

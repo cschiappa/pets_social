@@ -28,6 +28,10 @@
     "removePicture": "删除图片",
     "areYouSureYouWantToDoThis": "您确定要执行此操作吗？",
     "ifYouLeaveEverythingWillBeLost": "如果您离开此页面，所有更改都将丢失。",
+    "whatIsThisStore": "这个商店是做什么的？",
+    "hereYouCanBuyPrizes": "在这里，您可以购买酷炫的奖品送给其他宠物！试试看 ♡",
+    "whyCantIDeleteTheCurrentProfile": "为什么我不能删除当前档案？",
+    "youCanDeleteTheCurrentProfileIf": "你可以！但首先你必须使用不同于你想删除的那个档案。当你返回到设置页面时，删除按钮应该是可用的。",
 
     "verifyEmail": "验证你的电子邮件地址！",
     "reachedLastStep": "恭喜！您已经到达最后一步！",
