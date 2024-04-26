@@ -1,20 +1,27 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
+import 'package:pets_social/core/utils/utils.dart';
+import 'package:pets_social/core/utils/validators.dart';
+import 'package:pets_social/core/widgets/button.dart';
+import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
 import 'package:pets_social/core/widgets/text_field_input.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
+class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
 
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
-  final bool _isLoading = false;
+  //final bool _isLoading = false;
+  final GlobalKey<FormState> _formKeySendEmailLink = GlobalKey();
 
   @override
   void dispose() {
@@ -22,34 +29,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
-  //PASSWORD RESET TO EMAIL
-  Future passwordLinkToEmail() async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text.trim());
-      if (!mounted) return;
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              content: Text(LocaleKeys.ifEmailExistsResetLink.tr()),
-            );
-          });
-    } on FirebaseAuthException catch (e) {
-      debugPrint(e.toString());
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Text(LocaleKeys.ifEmailExistsResetLink.tr()),
-          );
-        },
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+
+    ref.listen<AsyncValue>(
+      authControllerProvider,
+      (_, state) => state.showSnackbarOnError(context),
+    );
+    final AsyncValue<void> state = ref.watch(authControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -57,43 +45,40 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ),
       body: Padding(
         padding: ResponsiveLayout.isWeb(context) ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) : const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          children: [
-            Text(LocaleKeys.resetLink.tr()),
-            const SizedBox(
-              height: 24,
-            ),
-            //email textfield
-            TextFieldInput(textEditingController: _emailController, labelText: LocaleKeys.email.tr(), textInputType: TextInputType.emailAddress),
-            const SizedBox(
-              height: 24,
-            ),
-            //SEND BUTTON
-            InkWell(
-              onTap: () {
-                passwordLinkToEmail();
-                _emailController.clear();
-              },
-              child: Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: ShapeDecoration(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                  ),
-                  color: theme.colorScheme.secondary,
-                ),
-                child: _isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          color: theme.colorScheme.primary,
-                        ),
-                      )
-                    : Text(LocaleKeys.send.tr()),
+        child: Form(
+          key: _formKeySendEmailLink,
+          child: Column(
+            children: [
+              Text(LocaleKeys.resetLink.tr()),
+              const SizedBox(
+                height: 24,
               ),
-            ),
-          ],
+              //email textfield
+              TextFieldInput(
+                textEditingController: _emailController,
+                labelText: LocaleKeys.email.tr(),
+                textInputType: TextInputType.emailAddress,
+                validator: emptyField,
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              //SEND BUTTON
+              InkWell(
+                onTap: state.isLoading
+                    ? null
+                    : () async {
+                        if (_formKeySendEmailLink.currentState!.validate()) {
+                          await ref.read(authControllerProvider.notifier).passwordLinkToEmail(_emailController.text.trim()).then((value) => showSnackBar(LocaleKeys.ifEmailExistsResetLink.tr(), context));
+                        }
+                      },
+                child: Button(
+                  state: state,
+                  text: LocaleKeys.send.tr(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

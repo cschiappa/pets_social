@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
@@ -132,5 +133,35 @@ class ImageCropperCustom extends ImageCropper {
       compressQuality: compressQuality,
       uiSettings: uiSettings,
     );
+  }
+}
+
+//START OF WORD WITH UPPER CASE ONLY FORMATTER
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: capitalize(newValue.text),
+      selection: newValue.selection,
+    );
+  }
+}
+
+String capitalize(String value) {
+  if (value.trim().isEmpty) return "";
+  return "${value[0].toUpperCase()}${value.substring(1).toLowerCase()}";
+}
+
+//NO SPACES FORMATTER
+class NoSpaceFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    // Check if the new value contains any spaces
+    if (newValue.text.contains(' ')) {
+      // If it does, return the old value
+      return oldValue;
+    }
+    // Otherwise, return the new value
+    return newValue;
   }
 }

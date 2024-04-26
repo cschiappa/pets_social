@@ -12,6 +12,7 @@ import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
 import 'package:pets_social/core/utils/validators.dart';
+import 'package:pets_social/core/widgets/button.dart';
 import 'package:pets_social/core/widgets/liquid_pull_refresh.dart';
 import 'package:pets_social/core/widgets/responsive_drawer.dart';
 import 'package:pets_social/features/auth/controller/auth_controller.dart';
@@ -116,6 +117,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
                 // POST CARD
                 return ListView.builder(
+                    cacheExtent: 3000,
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
                       final ModelPost post = ModelPost.fromSnap(posts[index]);
@@ -337,6 +339,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 //USERNAME
                 TextFieldInput(
                   labelText: LocaleKeys.username.tr(),
+                  textCapitalization: TextCapitalization.words,
+                  inputFormatters: [UpperCaseTextFormatter(), NoSpaceFormatter()],
                   textInputType: TextInputType.text,
                   textEditingController: _usernameController,
                   validator: (value) {
@@ -395,48 +399,39 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                InkWell(
-                  onTap: () async {
-                    if (formKey.currentState!.validate() && formKeyTwo.currentState!.validate()) {
-                      await ref
-                          .read(profileControllerProvider.notifier)
-                          .createProfile(
-                            username: _usernameController.text,
-                            bio: _bioController.text,
-                            petTag: selectedPetTag,
-                            file: _image,
-                            uid: FirebaseAuth.instance.currentUser!.uid,
-                          )
-                          .then((value) {
-                        context.pop();
-                        _usernameController.clear();
-                        _bioController.clear();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(LocaleKeys.profileCreated.tr()),
-                          ),
-                        );
-                      });
-                    }
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: ShapeDecoration(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                        ),
-                        color: theme.colorScheme.secondary),
-                    child: state.isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: theme.colorScheme.secondary,
-                            ),
-                          )
-                        : Text(LocaleKeys.confirm.tr()),
-                  ),
-                ),
+                Consumer(builder: (context, ref, child) {
+                  return InkWell(
+                    onTap: state.isLoading
+                        ? null
+                        : () async {
+                            if (formKey.currentState!.validate() && formKeyTwo.currentState!.validate()) {
+                              await ref
+                                  .read(profileControllerProvider.notifier)
+                                  .createProfile(
+                                    username: _usernameController.text,
+                                    bio: _bioController.text,
+                                    petTag: selectedPetTag,
+                                    file: _image,
+                                    uid: FirebaseAuth.instance.currentUser!.uid,
+                                  )
+                                  .then((value) {
+                                context.pop();
+                                _usernameController.clear();
+                                _bioController.clear();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(LocaleKeys.profileCreated.tr()),
+                                  ),
+                                );
+                              });
+                            }
+                          },
+                    child: Button(
+                      state: state,
+                      text: LocaleKeys.confirm.tr(),
+                    ),
+                  );
+                }),
               ],
             );
           }),

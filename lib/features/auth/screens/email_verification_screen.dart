@@ -65,7 +65,25 @@ class _EmailVerificationScreenState extends ConsumerState<EmailVerificationScree
             const SizedBox(
               height: 50,
             ),
-            Text(LocaleKeys.reachedLastStep.tr()),
+            Text(
+              LocaleKeys.reachedLastStep.tr(),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            Text(
+              LocaleKeys.weSentYouVerificationLink.tr(),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              LocaleKeys.checkYourInbox.tr(),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              LocaleKeys.checkYourSpamFolder.tr(),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(
               height: 50,
             ),

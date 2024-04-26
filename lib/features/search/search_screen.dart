@@ -140,9 +140,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       }
 
                       return MasonryGridView.builder(
-                        //shrinkWrap: true,
                         itemCount: postsState.length,
-                        //cacheExtent: 1000,
                         cacheExtent: 3000,
                         itemBuilder: (context, index) {
                           ModelPost postIndex = postsState[index];

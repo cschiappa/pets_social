@@ -25,6 +25,10 @@
     "profileCreated": "个人资料创建成功！",
     "tagsUpdatedSuccessfully": "标签更新成功！",
 
+    "weSentYouVerificationLink": "我们已经向您发送了一个验证链接。",
+    "checkYourInbox": "请检查您的收件箱。",
+    "checkYourSpamFolder": "(如果找不到，请检查您的垃圾邮件文件夹。)",
+
     "removePicture": "删除图片",
     "areYouSureYouWantToDoThis": "您确定要执行此操作吗？",
     "ifYouLeaveEverythingWillBeLost": "如果您离开此页面，所有更改都将丢失。",

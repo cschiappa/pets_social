@@ -154,6 +154,13 @@ class AuthController extends _$AuthController {
     state = await AsyncValue.guard(() => authRepository.verifyCurrentPassword(currentPassword));
     return state.hasError == false;
   }
+
+  //SEND EMAIL VERIFICATION
+  Future<void> passwordLinkToEmail(String email) async {
+    final authRepository = ref.read(authRepositoryProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => authRepository.passwordLinkToEmail(email));
+  }
 }
 
 final accountProvider = StateNotifierProvider<AccountProvider, ModelAccount?>((ref) {

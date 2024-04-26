@@ -370,6 +370,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     //USERNAME
                     TextFieldInput(
                       labelText: LocaleKeys.username.tr(),
+                      textCapitalization: TextCapitalization.words,
+                      inputFormatters: [UpperCaseTextFormatter(), NoSpaceFormatter()],
                       textInputType: TextInputType.text,
                       initialValue: profile.username,
                       onChanged: ref.read(userProvider.notifier).updateUsername,

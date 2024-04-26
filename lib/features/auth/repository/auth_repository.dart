@@ -148,4 +148,8 @@ class AuthRepository {
     AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: currentPassword);
     return await user.reauthenticateWithCredential(credential);
   }
+
+  Future<void> passwordLinkToEmail(String email) async {
+    return await _auth.sendPasswordResetEmail(email: email);
+  }
 }

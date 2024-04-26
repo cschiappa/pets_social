@@ -12,8 +12,9 @@ class TextFieldInput extends StatefulWidget {
   final Widget? prefixIcon;
   final bool? suffixIcon;
   final List<TextInputFormatter>? inputFormatters;
+  final TextCapitalization textCapitalization;
 
-  const TextFieldInput({super.key, this.textEditingController, this.isPass = false, this.labelText, required this.textInputType, this.initialValue, this.onChanged, this.validator, this.prefixIcon, this.suffixIcon, this.inputFormatters});
+  const TextFieldInput({super.key, this.textEditingController, this.isPass = false, this.labelText, required this.textInputType, this.initialValue, this.onChanged, this.validator, this.prefixIcon, this.suffixIcon, this.inputFormatters, this.textCapitalization = TextCapitalization.none});
 
   @override
   State<TextFieldInput> createState() => _TextFieldInputState();
@@ -27,6 +28,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
     final ThemeData theme = Theme.of(context);
 
     return TextFormField(
+      textCapitalization: widget.textCapitalization,
       onTapOutside: (event) {
         FocusManager.instance.primaryFocus?.unfocus();
       },

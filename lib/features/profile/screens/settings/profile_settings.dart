@@ -95,7 +95,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
       title: Text(data['username']),
       trailing: hasMultipleProfiles && data['profileUid'] != profile!.profileUid
           ? TextButton(
-              child: Text(LocaleKeys.delete.tr()),
+              child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
               onPressed: () => _deleteProfile(data),
             )
           : null,
@@ -131,6 +131,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
                             textEditingController: _passwordController,
                             isPass: true,
                             validator: emptyField,
+                            suffixIcon: true,
                           ),
                           const SizedBox(
                             height: 24,
@@ -146,22 +147,21 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
 
                             if (verifyPassword == true) {
                               await ref.read(profileControllerProvider.notifier).deleteProfile(data['profileUid']).then((value) {
-                                //ref.read(userProvider.notifier).disposeProfile();
                                 _passwordController.clear();
-                                context.pop();
-                                context.pop();
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
                               });
                             } else {
                               showSnackBar(LocaleKeys.incorrectPassword.tr(), context);
                             }
                           },
-                          child: Text(LocaleKeys.delete.tr()),
+                          child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
                         ),
                         TextButton(
                           onPressed: () {
                             _passwordController.clear();
-                            context.pop();
-                            context.pop();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
                           },
                           child: Text(LocaleKeys.cancel.tr()),
                         ),
@@ -177,7 +177,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
                 style: const TextStyle(fontSize: 16),
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                context.pop();
               },
             )
           ],

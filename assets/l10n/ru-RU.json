@@ -25,6 +25,10 @@
     "profileCreated": "Профиль успешно создан!",
     "tagsUpdatedSuccessfully": "Теги успешно обновлены!",
 
+    "weSentYouVerificationLink": "Мы отправили вам ссылку для подтверждения.",
+    "checkYourInbox": "Пожалуйста, проверьте вашу почту.",
+    "checkYourSpamFolder": "(Если вы не нашли ее, проверьте папку со спамом.)",
+
     "removePicture": "Удалить изображение",
     "areYouSureYouWantToDoThis": "Вы уверены, что хотите это сделать?",
     "ifYouLeaveEverythingWillBeLost": "Если вы покинете эту страницу, все ваши изменения будут потеряны.",

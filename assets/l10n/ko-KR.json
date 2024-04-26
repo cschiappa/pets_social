@@ -25,6 +25,10 @@
     "profileCreated": "프로필이 성공적으로 생성되었습니다!",
     "tagsUpdatedSuccessfully": "태그가 성공적으로 업데이트되었습니다!",
 
+    "weSentYouVerificationLink": "인증 링크를 보냈습니다.",
+    "checkYourInbox": "귀하의 받은 편지함을 확인하세요.",
+    "checkYourSpamFolder": "(찾지 못하면 스팸 편지함을 확인하세요.)",
+
     "removePicture": "사진 제거",
     "areYouSureYouWantToDoThis": "이 작업을 진행하시겠습니까?",
     "ifYouLeaveEverythingWillBeLost": "이 페이지를 떠나면 모든 변경 내용이 사라집니다.",

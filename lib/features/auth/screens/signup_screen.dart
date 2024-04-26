@@ -113,6 +113,8 @@ class _SignupScreenState extends ConsumerState<ConsumerStatefulWidget> {
                     //USERNAME
                     TextFieldInput(
                       labelText: LocaleKeys.username.tr(),
+                      textCapitalization: TextCapitalization.words,
+                      inputFormatters: [UpperCaseTextFormatter(), NoSpaceFormatter()],
                       textInputType: TextInputType.text,
                       textEditingController: _usernameController,
                       validator: (value) {

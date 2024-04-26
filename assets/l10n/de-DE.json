@@ -25,6 +25,10 @@
     "profileCreated": "Profil erfolgreich erstellt!",
     "tagsUpdatedSuccessfully": "Tags erfolgreich aktualisiert!",
 
+    "weSentYouVerificationLink": "Wir haben Ihnen einen Bestätigungslink gesendet.",
+    "checkYourInbox": "Bitte überprüfen Sie Ihren Posteingang.",
+    "checkYourSpamFolder": "(Wenn Sie ihn nicht finden, überprüfen Sie Ihren Spam-Ordner.)",
+
     "removePicture": "Bild entfernen",
     "areYouSureYouWantToDoThis": "Bist du sicher, dass du das tun möchtest?",
     "ifYouLeaveEverythingWillBeLost": "Wenn du diese Seite verlässt, gehen alle deine Änderungen verloren.",

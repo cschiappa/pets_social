@@ -201,9 +201,10 @@ class _PostCardState extends ConsumerState<PostCard> {
                                       ),
                                     ),
                                     child: CircleAvatar(
+                                        backgroundColor: Colors.black,
                                         radius: 15,
                                         backgroundImage: profileFromPost != null
-                                            ? NetworkImage(
+                                            ? CachedNetworkImageProvider(
                                                 profileFromPost.photoUrl!,
                                               )
                                             : null),
@@ -257,7 +258,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                       padding: const EdgeInsets.all(2),
                                       child: const Icon(
                                         Icons.double_arrow_rounded,
-                                        size: 12,
+                                        size: 18,
                                       ),
                                     ),
                                   ),
@@ -391,7 +392,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                                                   },
                                                                   child: Container(
                                                                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                                    child: Text(LocaleKeys.delete.tr()),
+                                                                    child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
                                                                   ),
                                                                 )
                                                               //BLOCK OPTION FOR OTHER'S POSTS
