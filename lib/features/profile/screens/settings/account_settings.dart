@@ -199,7 +199,7 @@ class _AccountSettingsPageState extends ConsumerState<ConsumerStatefulWidget> {
             TextButton(
               child: Text(
                 LocaleKeys.delete.tr(),
-                style: const TextStyle(fontSize: 16, color: Colors.red),
+                style: TextStyle(fontSize: 16, color: theme.colorScheme.error),
               ),
               onPressed: () {
                 showDialog(

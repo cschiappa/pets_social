@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pets_social/core/constants/constants.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
+import 'package:pets_social/core/widgets/languages_menu.dart';
 import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
 import 'package:pets_social/router.dart';
@@ -71,14 +72,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           //BLOCKED ACCOUNTS
           ListTile(
             leading: const Icon(Icons.person_off),
-            title: Text(LocaleKeys.blockedAccounts.tr()),
+            title: Text(LocaleKeys.blockedProfiles.tr()),
             onTap: () => context.goNamed(AppRouter.blockedAccounts.name),
           ),
           //LANGUAGE
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(LocaleKeys.language.tr()),
-            onTap: () => _languageBottomSheet(context),
+            onTap: () => LanguagesMenuSheet().show(context: context),
           ),
           //REPORT A PROBLEM
           ListTile(
@@ -92,48 +93,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           ListTile(
             title: Text(
               LocaleKeys.signOut.tr(),
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: theme.colorScheme.error),
             ),
-            leading: const Icon(
+            leading: Icon(
               Icons.cancel,
               size: 20,
-              color: Colors.red,
+              color: theme.colorScheme.error,
             ),
             onTap: () => ref.read(authControllerProvider.notifier).signOut(),
           )
         ],
       ),
-    );
-  }
-
-  //LANGUAGE BOTTOMSHEET
-  _languageBottomSheet(BuildContext context) {
-    return CustomBottomSheet.show(context: context, listWidget: [
-      SingleChildScrollView(
-        child: SizedBox(
-          height: 500,
-          child: ListView.builder(
-            itemCount: languagesOriginal.length,
-            itemBuilder: (context, index) {
-              return _buildLanguageTile(context, supportedLocales[index], languagesOriginal[index], languagesTranslated[index]);
-            },
-          ),
-        ),
-      ),
-    ]);
-  }
-
-  //LANGUAGE LIST TILE
-  ListTile _buildLanguageTile(BuildContext context, Locale locale, String language, String subtitle) {
-    final ThemeData theme = Theme.of(context);
-    return ListTile(
-      title: Text(language),
-      subtitle: Text(subtitle).tr(),
-      selected: context.locale == locale,
-      selectedTileColor: theme.colorScheme.secondary,
-      onTap: () {
-        context.setLocale(locale);
-      },
     );
   }
 

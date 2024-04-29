@@ -36,7 +36,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
       decoration: InputDecoration(
         prefixIcon: widget.prefixIcon,
         filled: true,
-        fillColor: const Color.fromARGB(255, 35, 35, 35),
+        //fillColor: const Color.fromARGB(255, 35, 35, 35),
         labelText: widget.labelText,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),

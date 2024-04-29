@@ -16,6 +16,8 @@ class PrizesList extends StatefulWidget {
 class _PrizesListState extends State<PrizesList> {
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Consumer(
       builder: (context, ref, child) {
         return SizedBox(
@@ -37,7 +39,10 @@ class _PrizesListState extends State<PrizesList> {
                           const SizedBox(
                             width: 3,
                           ),
-                          Text(postPrizeData.get('quantity').toString()),
+                          Text(
+                            postPrizeData.get('quantity').toString(),
+                            style: TextStyle(color: Colors.white),
+                          ),
                           const SizedBox(
                             width: 10,
                           ),

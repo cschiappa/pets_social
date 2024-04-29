@@ -135,7 +135,7 @@ abstract class  LocaleKeys {
   static const accountsSettings = 'accountsSettings';
   static const darkMode = 'darkMode';
   static const notificationsSettings = 'notificationsSettings';
-  static const blockedAccounts = 'blockedAccounts';
+  static const blockedProfiles = 'blockedProfiles';
   static const language = 'language';
   static const reportAProblem = 'reportAProblem';
   static const profiles = 'profiles';

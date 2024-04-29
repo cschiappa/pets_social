@@ -37,44 +37,49 @@ class _StorePrizeCardState extends ConsumerState<StorePrizeCard> {
     final ThemeData theme = Theme.of(context);
 
     return Stack(alignment: Alignment.bottomCenter, children: [
-      Container(
-          width: double.infinity,
-          decoration: BoxDecoration(border: Border.all(color: Colors.white), borderRadius: BorderRadius.circular(20.0), color: Colors.black),
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 25),
-                  child: PageView(
-                    controller: _controller,
-                    children: [
-                      Image.network(widget.prizeActivated),
-                      Image.network(widget.prizeDeactivated),
-                    ],
-                  ),
-                ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 45),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      Card(
+        child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              //border: Border.all(color: Colors.white),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 25),
+                    child: PageView(
+                      controller: _controller,
                       children: [
-                        SmoothPageIndicator(
-                          controller: _controller,
-                          count: 2,
-                          effect: JumpingDotEffect(activeDotColor: theme.colorScheme.secondary, dotWidth: 10, dotHeight: 10),
-                        ),
+                        Image.network(widget.prizeActivated),
+                        Image.network(widget.prizeDeactivated),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ],
-          )),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 45),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SmoothPageIndicator(
+                            controller: _controller,
+                            count: 2,
+                            effect: JumpingDotEffect(activeDotColor: theme.colorScheme.secondary, dotWidth: 10, dotHeight: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )),
+      ),
       Container(),
       FilledButton.icon(
         onPressed: () => _orderBottomSheet(context, widget.state, widget.title, widget.prizePrice),
@@ -82,7 +87,7 @@ class _StorePrizeCardState extends ConsumerState<StorePrizeCard> {
         label: Text(widget.prizePrice.toString()),
         style: ButtonStyle(
           minimumSize: MaterialStateProperty.all(const Size(170, 30)),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.white.withOpacity(0.5)),
+          backgroundColor: MaterialStateProperty.all<Color>(theme.colorScheme.primary.withOpacity(0.5)),
         ),
       ),
     ]);

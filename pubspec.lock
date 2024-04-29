@@ -265,6 +265,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  country_flags:
+    dependency: "direct main"
+    description:
+      name: country_flags
+      sha256: dbc4f76e7c801619b2d841023e0327191ba00663f1f1b4770394e9bc6632c444
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   coverage:
     dependency: transitive
     description:
@@ -377,6 +385,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  enum_to_string:
+    dependency: transitive
+    description:
+      name: enum_to_string
+      sha256: bd9e83a33b754cb43a75b36a9af2a0b92a757bfd9847d2621ca0b1bed45f8e7a
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   equatable:
     dependency: transitive
     description:
@@ -609,6 +625,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  flag:
+    dependency: "direct main"
+    description:
+      name: flag
+      sha256: cfca88049e769caf7ec439e6fbd23fd7ff4f332757796a0b7c09d94579c1ea70
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -932,6 +956,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  jovial_misc:
+    dependency: transitive
+    description:
+      name: jovial_misc
+      sha256: f6e64f789ee311025bb367be9c9afe9759f76dd8209070b7f38e735b5f529eb1
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.5"
+  jovial_svg:
+    dependency: transitive
+    description:
+      name: jovial_svg
+      sha256: "7162d9fce53e284782f6178e175c9e07dde695779392eaa2542c1f795658eb3d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.20"
   js:
     dependency: transitive
     description:

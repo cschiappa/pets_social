@@ -166,7 +166,7 @@ class _AddPostScreenState extends ConsumerState<AddPostScreen> {
                             onPressed: () => context.pop(),
                             child: Text(
                               LocaleKeys.cancel.tr(),
-                              style: const TextStyle(color: Colors.red),
+                              style: TextStyle(color: theme.colorScheme.error),
                             ),
                           ),
                           TextButton(

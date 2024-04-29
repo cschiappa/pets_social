@@ -1,11 +1,16 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flag/flag_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/validators.dart';
 import 'package:pets_social/core/widgets/button.dart';
+import 'package:pets_social/core/widgets/languages_menu.dart';
 import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/responsive/responsive_layout_screen.dart';
@@ -139,7 +144,19 @@ class _LoginScreenState extends ConsumerState<ConsumerStatefulWidget> {
                             ),
                           ),
                         ],
-                      )
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: InkWell(
+                          onTap: () => LanguagesMenuSheet().show(context: context),
+                          child: Flag.fromString(
+                            context.locale.countryCode ?? '',
+                            height: 18,
+                            width: 32,
+                            borderRadius: 8,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

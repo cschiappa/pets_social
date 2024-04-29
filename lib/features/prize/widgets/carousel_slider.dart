@@ -50,9 +50,9 @@ class _PrizesCarouselSliderState extends State<PrizesCarouselSlider> {
                   onTap: () {
                     widget.controller.previousPage();
                   },
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_left,
-                    color: theme.colorScheme.primary,
+                    color: Colors.white,
                   ),
                 ),
                 Expanded(
@@ -70,7 +70,7 @@ class _PrizesCarouselSliderState extends State<PrizesCarouselSlider> {
                                 Image.network(prize.iconDeactivated),
                                 const Text(
                                   'Unlock',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                 )
                               ]),
                             )
@@ -108,7 +108,10 @@ class _PrizesCarouselSliderState extends State<PrizesCarouselSlider> {
                   onTap: () {
                     widget.controller.nextPage();
                   },
-                  child: Icon(Icons.arrow_right, color: theme.colorScheme.primary),
+                  child: const Icon(
+                    Icons.arrow_right,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),

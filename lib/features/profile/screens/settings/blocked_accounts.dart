@@ -21,7 +21,7 @@ class _BlockedAccountsPageState extends ConsumerState<BlockedAccountsPage> {
       child: Scaffold(
         backgroundColor: theme.appBarTheme.backgroundColor,
         appBar: AppBar(
-          title: Text(LocaleKeys.blockedAccounts.tr()),
+          title: Text(LocaleKeys.blockedProfiles.tr()),
           backgroundColor: theme.colorScheme.background,
         ),
         body: _buildUserList(),

@@ -18,7 +18,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     return Scaffold(
       body: widget.navigationShell,
       bottomNavigationBar: CupertinoTabBar(
-        backgroundColor: Colors.black,
+        backgroundColor: theme.colorScheme.background,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(

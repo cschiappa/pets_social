@@ -110,7 +110,6 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
         onFieldSubmitted: (String value) => widget.onSubmitted?.call(controller.textWithoutReplacements),
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color.fromARGB(255, 35, 35, 35),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),

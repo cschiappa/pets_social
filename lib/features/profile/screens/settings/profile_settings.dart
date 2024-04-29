@@ -81,6 +81,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
   Widget _buildProfileListItem(DocumentSnapshot document, bool hasMultipleProfiles) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
     final ModelProfile? profile = ref.watch(userProvider);
+    final ThemeData theme = Theme.of(context);
 
     ref.listen<AsyncValue>(
       authControllerProvider,
@@ -95,7 +96,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
       title: Text(data['username']),
       trailing: hasMultipleProfiles && data['profileUid'] != profile!.profileUid
           ? TextButton(
-              child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
+              child: Text(LocaleKeys.delete.tr(), style: TextStyle(fontSize: 16, color: theme.colorScheme.error)),
               onPressed: () => _deleteProfile(data),
             )
           : null,
@@ -103,6 +104,8 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
   }
 
   _deleteProfile(Map<String, dynamic> data) {
+    final ThemeData theme = Theme.of(context);
+
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -113,7 +116,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
             TextButton(
               child: Text(
                 LocaleKeys.delete.tr(),
-                style: const TextStyle(fontSize: 16, color: Colors.red),
+                style: TextStyle(fontSize: 16, color: theme.colorScheme.error),
               ),
               onPressed: () {
                 showDialog(
@@ -155,7 +158,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
                               showSnackBar(LocaleKeys.incorrectPassword.tr(), context);
                             }
                           },
-                          child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
+                          child: Text(LocaleKeys.delete.tr(), style: TextStyle(fontSize: 16, color: theme.colorScheme.error)),
                         ),
                         TextButton(
                           onPressed: () {

@@ -70,11 +70,12 @@ class _TagTextFieldState extends ConsumerState<TagTextField> {
 
   //INPUT CHIP
   Widget _chipBuilder(BuildContext context, String tag) {
+    final ThemeData theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(right: 3),
       child: InputChip(
         key: ObjectKey(tag),
-        deleteIconColor: Colors.white,
+        deleteIconColor: theme.colorScheme.primary,
         label: Text(tag),
         onDeleted: () => _onChipDeleted(tag),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

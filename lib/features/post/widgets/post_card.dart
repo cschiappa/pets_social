@@ -112,7 +112,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                         });
                       },
                       child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: Colors.black),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0), color: theme.colorScheme.background),
                         width: double.infinity,
                         constraints: const BoxConstraints(maxHeight: 550),
                         child: Stack(
@@ -154,7 +154,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                     isLikeAnimating = false;
                                   });
                                 },
-                                child: Icon(Icons.favorite, color: theme.colorScheme.primary, size: 120),
+                                child: Icon(Icons.favorite, color: Colors.white, size: 120),
                               ),
                             )
                           ],
@@ -201,7 +201,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                       ),
                                     ),
                                     child: CircleAvatar(
-                                        backgroundColor: Colors.black,
+                                        backgroundColor: theme.colorScheme.background,
                                         radius: 15,
                                         backgroundImage: profileFromPost != null
                                             ? CachedNetworkImageProvider(
@@ -233,7 +233,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                       profileFromPost == null ? "" : profileFromPost.username,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: theme.colorScheme.primary,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
@@ -256,9 +256,10 @@ class _PostCardState extends ConsumerState<PostCard> {
                                         borderRadius: BorderRadius.all(Radius.circular(20)),
                                       ),
                                       padding: const EdgeInsets.all(2),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.double_arrow_rounded,
                                         size: 18,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
@@ -276,7 +277,10 @@ class _PostCardState extends ConsumerState<PostCard> {
                                         onTap: () => ref.read(isMenuOpenProvider.notifier).state = !isMenuOpen,
                                         child: Transform.flip(
                                           flipX: true,
-                                          child: const Icon(Icons.double_arrow_rounded),
+                                          child: Icon(
+                                            Icons.double_arrow_rounded,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       )
                                     : Row(
@@ -311,7 +315,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                             },
                                             child: Icon(
                                               Icons.share,
-                                              color: theme.colorScheme.primary,
+                                              color: Colors.white,
                                             ),
                                           ),
                                           //BOOKMARK
@@ -327,7 +331,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                                   },
                                                   child: Icon(
                                                     savedPosts.contains(widget.post.postId) ? Icons.bookmark : Icons.bookmark_border,
-                                                    color: theme.colorScheme.primary,
+                                                    color: Colors.white,
                                                   ),
                                                 ),
                                               );
@@ -374,7 +378,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                                                               onPressed: () async {
                                                                                 await ref.read(postControllerProvider.notifier).deletePost(widget.post.postId).then((value) => context.pop());
                                                                               },
-                                                                              child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
+                                                                              child: Text(LocaleKeys.delete.tr(), style: TextStyle(fontSize: 16, color: theme.colorScheme.error)),
                                                                             ),
                                                                             TextButton(
                                                                               onPressed: () {
@@ -392,7 +396,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                                                   },
                                                                   child: Container(
                                                                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                                    child: Text(LocaleKeys.delete.tr(), style: const TextStyle(fontSize: 16, color: Colors.red)),
+                                                                    child: Text(LocaleKeys.delete.tr(), style: TextStyle(fontSize: 16, color: theme.colorScheme.error)),
                                                                   ),
                                                                 )
                                                               //BLOCK OPTION FOR OTHER'S POSTS
@@ -437,7 +441,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                             },
                                             child: Icon(
                                               Icons.more_vert,
-                                              color: theme.colorScheme.primary,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ],
@@ -486,7 +490,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                       //USERNAME
                       Text(
                         profileFromPost == null ? "" : profileFromPost.username,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
                       ),
                       //DESCRIPTION
                       if (widget.post.description != '')
@@ -533,7 +537,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                           LocaleKeys.viewComments.tr(namedArgs: {'int': commentsNumber.value.toString()}),
                           style: TextStyle(
                             fontSize: 15,
-                            color: theme.colorScheme.primary,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -541,7 +545,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                       //DATE PUBLISHED
                       Text(
                         DateFormat.yMMMd().format(widget.post.datePublished),
-                        style: TextStyle(fontSize: 12, color: theme.colorScheme.primary),
+                        style: TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     ],
                   ),
@@ -600,7 +604,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                       child: state.isLoading
                           ? Center(
                               child: CircularProgressIndicator(
-                                color: theme.colorScheme.primary,
+                                color: Colors.white,
                               ),
                             )
                           : Text(LocaleKeys.confirm.tr()),
@@ -667,7 +671,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                         child: state.isLoading
                             ? Center(
                                 child: CircularProgressIndicator(
-                                  color: theme.colorScheme.primary,
+                                  color: Colors.white,
                                 ),
                               )
                             : Text(LocaleKeys.confirm.tr()),
