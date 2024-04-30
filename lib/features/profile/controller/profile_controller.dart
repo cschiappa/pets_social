@@ -104,6 +104,7 @@ class ProfileController extends _$ProfileController {
     final profileRepository = ref.read(profileRepositoryProvider);
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => profileRepository.blockProfile(profileUid, blockedId));
+    await ref.read(userProvider.notifier).updateFollowProfiles(profileUid, blockedId);
   }
 
   //DELETE PROFILE

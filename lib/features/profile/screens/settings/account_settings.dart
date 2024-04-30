@@ -175,10 +175,10 @@ class _AccountSettingsPageState extends ConsumerState<ConsumerStatefulWidget> {
             ),
             TextButton(
               onPressed: () {
+                Navigator.of(context).pop();
                 _currentPasswordController.clear();
                 _newPasswordController.clear();
                 _passwordController.clear();
-                context.pop();
               },
               child: Text(LocaleKeys.cancel.tr()),
             ),

@@ -865,7 +865,7 @@ class _FetchProfilePrizeQuantityProviderElement
       (origin as FetchProfilePrizeQuantityProvider).prizeType;
 }
 
-String _$profileControllerHash() => r'03a98e0fda6741dd6e7ec8904a8b1e056529d001';
+String _$profileControllerHash() => r'd1b06359e881744b044a8f2bd8c83ea8625a8a99';
 
 /// See also [ProfileController].
 @ProviderFor(ProfileController)

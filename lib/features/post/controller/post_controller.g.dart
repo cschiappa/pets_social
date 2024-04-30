@@ -1275,7 +1275,7 @@ class _GetCommentsNumberProviderElement
   String get postId => (origin as GetCommentsNumberProvider).postId;
 }
 
-String _$postControllerHash() => r'be5b4745e0e782e4ea4ca96ce4f5bfdcc366f188';
+String _$postControllerHash() => r'9f7e8401714a90abad196a3911fb6cbafa48e0b4';
 
 /// See also [PostController].
 @ProviderFor(PostController)

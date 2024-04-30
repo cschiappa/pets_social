@@ -396,7 +396,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                                                   },
                                                                   child: Container(
                                                                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                                                    child: Text(LocaleKeys.delete.tr(), style: TextStyle(fontSize: 16, color: theme.colorScheme.error)),
+                                                                    child: Text(LocaleKeys.delete.tr(), style: TextStyle(color: theme.colorScheme.error)),
                                                                   ),
                                                                 )
                                                               //BLOCK OPTION FOR OTHER'S POSTS
@@ -496,14 +496,17 @@ class _PostCardState extends ConsumerState<PostCard> {
                       if (widget.post.description != '')
                         Container(
                           child: widget.post.description!.length < 20
-                              ? Text('${widget.post.description}', style: const TextStyle(fontSize: 15))
+                              ? Text('${widget.post.description}', style: const TextStyle(fontSize: 15, color: Colors.white))
                               : ref.watch(showDescriptionProvider) == false
                                   ? Row(
                                       children: [
-                                        Text(cropMessage('${widget.post.description}', 20), style: const TextStyle(fontSize: 15)),
+                                        Text(cropMessage('${widget.post.description}', 20), style: const TextStyle(fontSize: 15, color: Colors.white)),
                                         GestureDetector(
                                           onTap: () => ref.read(showDescriptionProvider.notifier).state = true,
-                                          child: Text(LocaleKeys.showMore.tr()),
+                                          child: Text(
+                                            LocaleKeys.showMore.tr(),
+                                            style: const TextStyle(color: Colors.white),
+                                          ),
                                         ),
                                       ],
                                     )
@@ -512,11 +515,14 @@ class _PostCardState extends ConsumerState<PostCard> {
                                       children: [
                                         Text(
                                           '${widget.post.description}',
-                                          style: const TextStyle(fontSize: 15),
+                                          style: const TextStyle(fontSize: 15, color: Colors.white),
                                         ),
                                         GestureDetector(
                                           onTap: () => ref.read(showDescriptionProvider.notifier).state = false,
-                                          child: Text(LocaleKeys.showLess.tr()),
+                                          child: Text(
+                                            LocaleKeys.showLess.tr(),
+                                            style: const TextStyle(color: Colors.white),
+                                          ),
                                         ),
                                       ],
                                     ),

@@ -268,7 +268,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     textColor: Colors.black,
                     borderColor: Colors.grey,
                     function: () async {
-                      ref.watch(userProvider.notifier).updateFollowProfiles(profile.profileUid, profileData.profileUid);
+                      await ref.read(userProvider.notifier).updateFollowProfiles(profile.profileUid, profileData.profileUid);
                     },
                   )
                 : FollowButton(
@@ -277,7 +277,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     textColor: Colors.white,
                     borderColor: theme.colorScheme.secondary,
                     function: () async {
-                      ref.watch(userProvider.notifier).updateFollowProfiles(profile.profileUid, profileData.profileUid);
+                      await ref.read(userProvider.notifier).updateFollowProfiles(profile.profileUid, profileData.profileUid);
                     },
                   ),
       ],

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pets_social/features/tag/controller/tag_controller.dart';
@@ -55,7 +56,7 @@ class _TagTextFieldState extends ConsumerState<TagTextField> {
                   final suggestion = _suggestions[index];
                   return ListTile(
                     visualDensity: const VisualDensity(vertical: -4),
-                    title: Text(suggestion),
+                    title: Text(suggestion.tr()),
                     onTap: () {
                       _selectSuggestion.call(suggestion);
                     },
@@ -76,7 +77,7 @@ class _TagTextFieldState extends ConsumerState<TagTextField> {
       child: InputChip(
         key: ObjectKey(tag),
         deleteIconColor: theme.colorScheme.primary,
-        label: Text(tag),
+        label: Text(tag.tr()),
         onDeleted: () => _onChipDeleted(tag),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         padding: const EdgeInsets.all(2),
@@ -142,7 +143,7 @@ class _TagTextFieldState extends ConsumerState<TagTextField> {
     final petTags = ref.watch(getPetTagsCollectionProvider).valueOrNull;
     if (text.isNotEmpty && petTags != null) {
       return petTags.where((String petTag) {
-        return petTag.toLowerCase().contains(text.toLowerCase());
+        return petTag.tr().toLowerCase().contains(text.toLowerCase());
       }).toList();
     }
     return const <String>[];

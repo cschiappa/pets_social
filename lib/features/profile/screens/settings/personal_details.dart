@@ -32,7 +32,7 @@ class PersonalDetailsPage extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.tag),
             title: const Text('Pet Tag'),
-            subtitle: Text(profile.petTag.first),
+            subtitle: Text(profile.petTag.first.toString().tr()),
           ),
           //EMAIL
           ListTile(
