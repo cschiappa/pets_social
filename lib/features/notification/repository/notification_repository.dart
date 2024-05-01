@@ -136,9 +136,16 @@ class NotificationRepository {
   }
 
   // SEND NOTIFICATION
-  Future<void> sendNotificationToUser(String userUid, String title, String body, String postId, String receiverUid, String senderUid) async {
+  Future<void> sendNotificationToUser(
+    String userUid,
+    String title,
+    String body,
+    String postId,
+    String receiverProfileUid,
+    String senderProfileUid,
+  ) async {
     const String url = 'https://fcm.googleapis.com/v1/projects/pets-social-3d14e/messages:send';
-    final userPath = FirestorePath.user(_auth.currentUser!.uid);
+    final userPath = FirestorePath.user(userUid);
 
     final user = await _firestore.doc(userPath).get();
 
@@ -152,7 +159,7 @@ class NotificationRepository {
     };
 
     try {
-      uploadNotificationToStorage(postId, body, receiverUid, senderUid);
+      uploadNotificationToStorage(postId, body, receiverProfileUid, senderProfileUid);
       for (String userFCMToken in userFCMTokenList) {
         final Map<String, dynamic> notificationData = {
           "message": {
@@ -200,7 +207,7 @@ class NotificationRepository {
   }
 
 //NOTIFICATION METHOD FOR POSTS
-  Future<void> notificationMethod(String postId, String profileUid, String action) async {
+  Future<void> notificationMethod(String postId, String senderProfileUid, String action) async {
     final String postPath = FirestorePath.post(postId);
     //get user that made the post
     final user = await _firestore.doc(postPath).get().then((value) {
@@ -208,17 +215,24 @@ class NotificationRepository {
     });
 
     //get profile that made the post
-    final receiverUid = await _firestore.doc(postPath).get().then((value) {
+    final receiverProfileUid = await _firestore.doc(postPath).get().then((value) {
       return value.data()!['profileUid'];
     });
 
     //get profile that liked the post
-    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).get();
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore.collectionGroup('profiles').where('profileUid', isEqualTo: senderProfileUid).get();
 
     if (querySnapshot.docs.isNotEmpty) {
       final actionUser = querySnapshot.docs[0].data()['username'];
 
-      await sendNotificationToUser(user, 'Pets Social', LocaleKeys.gaveToPost.tr(namedArgs: {"profile": actionUser, "item": action}), postId, receiverUid, profileUid);
+      await sendNotificationToUser(
+        user,
+        'Pets Social',
+        LocaleKeys.gaveToPost.tr(namedArgs: {"profile": actionUser, "item": action}),
+        postId,
+        receiverProfileUid,
+        senderProfileUid,
+      );
     }
   }
 
@@ -252,12 +266,23 @@ class NotificationRepository {
   }
 
 //UPLOAD NOTIFICATION TO STORAGE
-  Future<void> uploadNotificationToStorage(String postId, String body, String receiverUid, String senderUid) async {
+  Future<void> uploadNotificationToStorage(
+    String postId,
+    String body,
+    String receiverProfileUid,
+    String senderProfileUid,
+  ) async {
     try {
       String notificationId = const Uuid().v1();
       final String notificationPath = FirestorePath.notification(notificationId);
 
-      ModelNotification notification = ModelNotification(postId: postId, body: body, receiver: receiverUid, sender: senderUid, datePublished: DateTime.now());
+      ModelNotification notification = ModelNotification(
+        postId: postId,
+        body: body,
+        receiver: receiverProfileUid,
+        sender: senderProfileUid,
+        datePublished: DateTime.now(),
+      );
 
       _firestore.doc(notificationPath).set(notification.toJson());
 

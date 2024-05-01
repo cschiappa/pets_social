@@ -131,6 +131,7 @@ class AuthController extends _$AuthController {
     ref.read(userProvider.notifier).disposeProfile();
     ref.invalidate(isEmailVerifiedProvider);
     ref.read(isEmailVerifiedProvider);
+    await ref.read(notificationRepositoryProvider).removeTokenFromDatabase();
   }
 
   //DELETE PROFILE
