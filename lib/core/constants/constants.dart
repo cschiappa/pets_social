@@ -36,4 +36,5 @@ class LiquidKeys {
   static const liquidKey2 = Key('__LIQUIDKEY2__');
   static const liquidKey3 = Key('__LIQUIDKEY3__');
   static const liquidKey4 = Key('__LIQUIDKEY4__');
+  static const liquidKey5 = Key('__LIQUIDKEY5__');
 }

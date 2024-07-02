@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pets_social/core/constants/firebase_constants.dart';
 import 'package:pets_social/core/providers/storage_methods.dart';
 import 'package:pets_social/features/notification/repository/notification_repository.dart';
+import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:uuid/uuid.dart';
 
@@ -48,12 +49,6 @@ class ProfileRepository {
     return _firestore.collectionGroup('profiles').where('profileUid', isEqualTo: profileUid).snapshots().map((querySnapshot) {
       return ModelProfile.fromSnap(querySnapshot.docs.first);
     });
-  }
-
-  //GET PROFILES FROM CURRENT USER
-  Stream<QuerySnapshot<Map<String, dynamic>>> getAccountProfiles() {
-    final String userPath = FirestorePath.user(_auth.currentUser!.uid);
-    return _firestore.doc(userPath).collection('profiles').snapshots();
   }
 
   //GET PROFILE FROM POST

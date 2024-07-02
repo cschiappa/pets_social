@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,10 +13,12 @@ import 'package:pets_social/core/utils/validators.dart';
 import 'package:pets_social/core/widgets/follow_button.dart';
 import 'package:pets_social/core/widgets/liquid_pull_refresh.dart';
 import 'package:pets_social/core/widgets/text_field_input.dart';
+import 'package:pets_social/features/auth/controller/auth_controller.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
 import 'package:pets_social/features/prize/controller/prize_controller.dart';
 import 'package:pets_social/features/prize/widgets/prize_list_profile.dart';
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
+import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/models/post.dart';
@@ -25,9 +28,10 @@ import 'package:pets_social/core/widgets/bottom_sheet.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final String? profileUid;
+  final String? userId;
   final dynamic snap;
 
-  const ProfileScreen({super.key, this.profileUid, this.snap});
+  const ProfileScreen({super.key, this.profileUid, this.userId, this.snap});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ProfileScreenState();
@@ -35,7 +39,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
-  late String userId = "";
+  late String currentProfileId = "";
+  late String currentUserId = "";
   Uint8List? _image;
   String? _imagePath;
   final bool _isLoading = false;
@@ -56,20 +61,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   //REFRESH PROFILE
   Future<void> _handleRefresh() async {
     await ref.read(userProvider.notifier).getProfileDetails();
-    ref.invalidate(getProfilePrizesProvider(userId));
-    ref.read(getProfilePrizesProvider(userId));
+    ref.invalidate(getProfilePrizesProvider(currentProfileId));
+    ref.read(getProfilePrizesProvider(currentProfileId));
     return await Future.delayed(const Duration(milliseconds: 500));
   }
 
   @override
   Widget build(BuildContext context) {
     final ModelProfile? profile = ref.watch(userProvider);
-    final ThemeData theme = Theme.of(context);
-    userId = widget.profileUid ?? profile!.profileUid;
-    final profileData = ref.watch(getProfileDataProvider(userId));
-    final profilePosts = ref.watch(getProfilePostsProvider(userId));
+    final ModelAccount? account = ref.watch(accountProvider);
 
-    final List<String> settingsOptions = [LocaleKeys.savedPosts.tr(), LocaleKeys.settings.tr(), if (userId != profile!.profileUid) LocaleKeys.reportProfile.tr()];
+    final ThemeData theme = Theme.of(context);
+    currentProfileId = widget.profileUid ?? profile!.profileUid;
+    currentUserId = widget.userId ?? account!.uid;
+    final profileData = ref.watch(getProfileDataProvider(currentProfileId));
+    final profilePosts = ref.watch(getProfilePostsProvider(currentProfileId));
+
+    final accountProfiles = ref.watch(getAccountProfilesProvider(currentUserId));
+
+    final List<String> settingsOptions = [LocaleKeys.savedPosts.tr(), LocaleKeys.settings.tr(), if (currentProfileId != profile!.profileUid) LocaleKeys.reportProfile.tr()];
 
     ref.listen<AsyncValue>(
       postControllerProvider,
@@ -146,16 +156,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       profileData.bio ?? '',
                     ),
                     //PROFILE STATS ROW
-                    //profileStats(profileData.followers.length),
                     SizedBox(
                       height: 50,
                       child: ProfilePrizeList(
-                        userId: userId,
+                        userId: currentProfileId,
                       ),
                     ),
                     //SIGN OUT/FOLLOW BUTTON AND SETTINGS WHEEL
                     signOutButtonAndSettingsRow(profile, theme, profileData),
                     const Divider(),
+                    _otherHouseholdPetsRow(accountProfiles),
                     //PICTURES GRID
                     profilePosts.when(
                         error: (error, stacktrace) => Text('error: $error'),
@@ -230,9 +240,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   //PROFILE STATS ROW
   Widget profileStats(followers) {
-    final likes = ref.watch(fetchProfilePrizeQuantityProvider(userId, "like")).value;
-    final fish = ref.watch(fetchProfilePrizeQuantityProvider(userId, "fish")).value;
-    final bones = ref.watch(fetchProfilePrizeQuantityProvider(userId, "bone")).value;
+    final likes = ref.watch(fetchProfilePrizeQuantityProvider(currentProfileId, "like")).value;
+    final fish = ref.watch(fetchProfilePrizeQuantityProvider(currentProfileId, "fish")).value;
+    final bones = ref.watch(fetchProfilePrizeQuantityProvider(currentProfileId, "bone")).value;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -251,7 +261,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        profile.profileUid == userId
+        profile.profileUid == currentProfileId
             ? FollowButton(
                 text: LocaleKeys.editProfile.tr(),
                 backgroundColor: theme.colorScheme.background,
@@ -492,6 +502,59 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  Widget _otherHouseholdPetsRow(AsyncValue<QuerySnapshot<Map<String, dynamic>>> accountProfiles) {
+    final ThemeData theme = Theme.of(context);
+
+    return accountProfiles.when(
+        error: (error, stackTrace) => Text('Error: $error'),
+        loading: () => LinearProgressIndicator(
+              color: theme.colorScheme.secondary,
+            ),
+        data: (accountProfiles) {
+          return SizedBox(
+            height: 100,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              children: accountProfiles.docs.map<Widget>((doc) => _buildProfileListItem(doc)).toList(),
+            ),
+          );
+        });
+  }
+
+  Widget _buildProfileListItem(DocumentSnapshot document) {
+    ModelProfile profileIndex = ModelProfile.fromSnap(document);
+    final ThemeData theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () => context.pushNamed(
+          AppRouter.navigateToProfile.name,
+          pathParameters: {
+            'profileUid': profileIndex.profileUid,
+            'userId': profileIndex.uid,
+          },
+        ),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: theme.colorScheme.primary, width: 2),
+              ),
+              child: CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(profileIndex.photoUrl ?? ""),
+              ),
+            ),
+            Text(profileIndex.username),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showReportBottomSheet(BuildContext context, state) {
     final ThemeData theme = Theme.of(context);
 
@@ -527,7 +590,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     InkWell(
                       onTap: () async {
-                        await ref.read(postControllerProvider.notifier).reportPost('profiles', userId, '', _summaryController.text).then((value) {
+                        await ref.read(postControllerProvider.notifier).reportPost('profiles', currentProfileId, '', _summaryController.text).then((value) {
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
                           showSnackBar(LocaleKeys.reportSent.tr(), context);

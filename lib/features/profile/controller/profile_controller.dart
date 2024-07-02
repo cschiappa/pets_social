@@ -37,13 +37,6 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getBlockedProfiles(GetBlockedProfile
   return repository.getBlockedProfiles(blockedProfiles);
 }
 
-//GET ACCOUNT PROFILES
-@riverpod
-Stream<QuerySnapshot<Map<String, dynamic>>> getAccountProfiles(GetAccountProfilesRef ref) {
-  final repository = ref.watch(profileRepositoryProvider);
-  return repository.getAccountProfiles();
-}
-
 //GET PROFILE FROM POST
 @riverpod
 Future<ModelProfile> getProfileFromPost(GetProfileFromPostRef ref, String profileUid) {

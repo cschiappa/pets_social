@@ -58,23 +58,23 @@ class AppRouter {
   static const Routes profileScreen = Routes(name: 'profileScreen', path: '/profile');
 
   //Navigate to profile
-  static const Routes navigateToProfile = Routes(name: 'navigateToProfile', path: '/:profileUid');
+  static const Routes navigateToProfile = Routes(name: 'navigateToProfile', path: '/:profileUid/:userId');
 
   //FeedScreen Sub-Routes
   static const Routes openPostFromDeeplink = Routes(name: 'openPostFromDeeplink', path: 'post/:postId/:profileUid/:username');
-  static const Routes profileFromFeed = Routes(name: 'profileFromFeed', path: 'profile/:profileUid');
+  static const Routes profileFromFeed = Routes(name: 'profileFromFeed', path: 'profile/:profileUid/:userId');
   static const Routes openPostFromFeed = Routes(name: 'openPostFromFeed', path: 'postFeed/:postId/:username');
   static const Routes commentsFromFeed = Routes(name: 'commentsFromFeed', path: 'post/:postId/:profileUid/:username/comments');
   static const Routes chatList = Routes(name: 'chatList', path: 'chatList');
   static const Routes chatPage = Routes(name: 'chatPage', path: 'chatpage/:receiverUserEmail/:receiverProfileUid/:receiverUsername/:receiverUserUid');
 
   //SearchScreen Sub-Routes
-  static const Routes profileFromSearch = Routes(name: 'profileFromSearch', path: 'profile/:profileUid');
+  static const Routes profileFromSearch = Routes(name: 'profileFromSearch', path: 'profile/:profileUid/:userId');
   static const Routes openPostFromSearch = Routes(name: 'openPostFromSearch', path: 'postSearch/:postId/:profileUid/:username');
   static const Routes commentsFromSearch = Routes(name: 'commentsFromSearch', path: 'post/:postId/:profileUid/:username/comments');
 
   //PrizesScreen Sub-Routes
-  static const Routes profileFromPrizes = Routes(name: 'profileFromPrizes', path: 'profile/:profileUid');
+  static const Routes profileFromPrizes = Routes(name: 'profileFromPrizes', path: 'profile/:profileUid/:userId');
   static const Routes openPostFromPrizes = Routes(name: 'openPostFromPrizes', path: 'postSearch/:postId/:profileUid/:username');
 
   //ProfileScreen Sub-Routes
@@ -121,10 +121,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             return AppRouter.sendEmailVerification.path;
           }
         }
-
-        // if (isLoggedIn && isInitialRoute && isEmailVerified == false) {
-
-        // }
 
         return null;
       },
@@ -189,6 +185,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   path: AppRouter.profileFromFeed.path,
                   builder: (context, state) => ProfileScreen(
                     profileUid: state.pathParameters["profileUid"]!,
+                    userId: state.pathParameters["userId"]!,
                   ),
                   routes: <RouteBase>[
                     //OPEN POST
@@ -238,6 +235,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   path: AppRouter.profileFromSearch.path,
                   builder: (context, state) => ProfileScreen(
                     profileUid: state.pathParameters["profileUid"]!,
+                    userId: state.pathParameters["userId"]!,
                   ),
                 ),
                 //OPEN POST
@@ -269,6 +267,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   path: AppRouter.profileFromPrizes.path,
                   builder: (context, state) => ProfileScreen(
                     profileUid: state.pathParameters["profileUid"]!,
+                    userId: state.pathParameters["userId"]!,
                   ),
                 ),
                 //OPEN POST
@@ -357,6 +356,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: AppRouter.navigateToProfile.path,
                 builder: (context, state) => ProfileScreen(
                   profileUid: state.pathParameters["profileUid"]!,
+                  userId: state.pathParameters["userId"]!,
                 ),
               ),
             ]),

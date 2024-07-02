@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pets_social/core/providers/firebase_providers.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
@@ -12,6 +14,7 @@ import 'package:pets_social/core/widgets/text_field_input.dart';
 import 'package:pets_social/features/auth/controller/auth_controller.dart';
 
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
+import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/profile.dart';
 
 class ProfileSettings extends ConsumerStatefulWidget {
@@ -62,7 +65,9 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
   //USER'S PROFILES LIST
   Widget _buildProfileList() {
     final ThemeData theme = Theme.of(context);
-    final accountProfiles = ref.watch(getAccountProfilesProvider);
+    final FirebaseAuth auth = ref.watch(authProvider);
+    final accountProfiles = ref.watch(getAccountProfilesProvider(auth.currentUser!.uid));
+
     return accountProfiles.when(
         error: (error, stackTrace) => Text('Error: $error'),
         loading: () => LinearProgressIndicator(
@@ -79,7 +84,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
 
   //USER'S PROFILES LIST ITEMS
   Widget _buildProfileListItem(DocumentSnapshot document, bool hasMultipleProfiles) {
-    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+    ModelProfile profileIndex = ModelProfile.fromSnap(document);
     final ModelProfile? profile = ref.watch(userProvider);
     final ThemeData theme = Theme.of(context);
 
@@ -89,21 +94,27 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
     );
 
     return ListTile(
-      leading: CircleAvatar(
-        radius: 15,
-        backgroundImage: NetworkImage(data['photoUrl']),
+      leading: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: theme.colorScheme.primary, width: 2),
+        ),
+        child: CircleAvatar(
+          radius: 15,
+          backgroundImage: NetworkImage(profileIndex.photoUrl ?? ''),
+        ),
       ),
-      title: Text(data['username']),
-      trailing: hasMultipleProfiles && data['profileUid'] != profile!.profileUid
+      title: Text(profileIndex.username),
+      trailing: hasMultipleProfiles && profileIndex.profileUid != profile!.profileUid
           ? TextButton(
               child: Text(LocaleKeys.delete.tr(), style: TextStyle(fontSize: 16, color: theme.colorScheme.error)),
-              onPressed: () => _deleteProfile(data),
+              onPressed: () => _deleteProfile(profileIndex),
             )
           : null,
     );
   }
 
-  _deleteProfile(Map<String, dynamic> data) {
+  _deleteProfile(ModelProfile profileIndex) {
     final ThemeData theme = Theme.of(context);
 
     return showDialog(
@@ -149,7 +160,7 @@ class _ProfileSettingsState extends ConsumerState<ProfileSettings> {
                             final bool verifyPassword = await ref.read(authControllerProvider.notifier).verifyCurrentPassword(currentPassword);
 
                             if (verifyPassword == true) {
-                              await ref.read(profileControllerProvider.notifier).deleteProfile(data['profileUid']).then((value) {
+                              await ref.read(profileControllerProvider.notifier).deleteProfile(profileIndex.profileUid).then((value) {
                                 _passwordController.clear();
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();

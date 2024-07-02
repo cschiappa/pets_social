@@ -309,24 +309,6 @@ class _GetBlockedProfilesProviderElement
       (origin as GetBlockedProfilesProvider).blockedProfiles;
 }
 
-String _$getAccountProfilesHash() =>
-    r'01c8c432fae31a20c0ffd93bb831045567f9a93a';
-
-/// See also [getAccountProfiles].
-@ProviderFor(getAccountProfiles)
-final getAccountProfilesProvider =
-    AutoDisposeStreamProvider<QuerySnapshot<Map<String, dynamic>>>.internal(
-  getAccountProfiles,
-  name: r'getAccountProfilesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getAccountProfilesHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef GetAccountProfilesRef
-    = AutoDisposeStreamProviderRef<QuerySnapshot<Map<String, dynamic>>>;
 String _$getProfileFromPostHash() =>
     r'97475f8e5664f934d6b0416297a5d5a071b79949';
 

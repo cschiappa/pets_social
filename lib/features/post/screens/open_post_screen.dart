@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pets_social/core/constants/constants.dart';
 import 'package:pets_social/core/utils/language.g.dart';
+import 'package:pets_social/core/widgets/liquid_pull_refresh.dart';
 import 'package:pets_social/features/post/widgets/post_card.dart';
 import 'package:pets_social/features/post/controller/post_controller.dart';
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
@@ -41,6 +43,12 @@ class _OpenPostState extends ConsumerState<OpenPost> {
     }
   }
 
+  //REFRESH PROFILE
+  Future<void> _handleRefresh() async {
+    await ref.read(userProvider.notifier).getProfileDetails();
+    return await Future.delayed(const Duration(milliseconds: 500));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -64,36 +72,41 @@ class _OpenPostState extends ConsumerState<OpenPost> {
               centerTitle: false,
               title: Text(LocaleKeys.postFrom.tr(namedArgs: {"profile": widget.username})),
             ),
-      body: profilePosts.when(
-          error: (error, stacktrace) => Text('error: $error'),
-          loading: () => Center(
-                child: CircularProgressIndicator(
-                  color: theme.colorScheme.secondary,
+      body: LiquidPullRefresh(
+        key: LiquidKeys.liquidKey5,
+        onRefresh: _handleRefresh,
+        child: profilePosts.when(
+            error: (error, stacktrace) => Text('error: $error'),
+            loading: () => Center(
+                  child: CircularProgressIndicator(
+                    color: theme.colorScheme.secondary,
+                  ),
                 ),
-              ),
-          data: (profilePosts) {
-            // POST CARD
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              scrollToPost(profilePosts.docs);
-            });
-            return ScrollablePositionedList.builder(
-                initialScrollIndex: profilePosts.docs.indexWhere((element) => element['postId'] == widget.postId),
-                itemScrollController: itemController,
-                key: _listKey,
-                itemCount: profilePosts.docs.length,
-                itemBuilder: (context, index) {
-                  final ModelPost post = ModelPost.fromSnap(profilePosts.docs[index]);
-                  return Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: ResponsiveLayout.isWeb(context) ? width * 0.3 : 0,
-                      vertical: ResponsiveLayout.isWeb(context) ? 15 : 0,
-                    ),
-                    child: PostCard(
-                      post: post,
-                    ),
-                  );
-                });
-          }),
+            data: (profilePosts) {
+              // POST CARD
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                scrollToPost(profilePosts.docs);
+              });
+              return ScrollablePositionedList.builder(
+                  initialScrollIndex: profilePosts.docs.indexWhere((element) => element['postId'] == widget.postId),
+                  itemScrollController: itemController,
+                  key: _listKey,
+                  itemCount: profilePosts.docs.length,
+                  minCacheExtent: 3000,
+                  itemBuilder: (context, index) {
+                    final ModelPost post = ModelPost.fromSnap(profilePosts.docs[index]);
+                    return Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: ResponsiveLayout.isWeb(context) ? width * 0.3 : 0,
+                        vertical: ResponsiveLayout.isWeb(context) ? 15 : 0,
+                      ),
+                      child: PostCard(
+                        post: post,
+                      ),
+                    );
+                  });
+            }),
+      ),
     );
   }
 }

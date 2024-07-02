@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -79,6 +80,13 @@ bool? isEmailVerified(IsEmailVerifiedRef ref) {
   user.currentUser?.reload();
   user.currentUser;
   return user.currentUser?.emailVerified;
+}
+
+//GET ACCOUNT PROFILES
+@riverpod
+Stream<QuerySnapshot<Map<String, dynamic>>> getAccountProfiles(GetAccountProfilesRef ref, String uid) {
+  final repository = ref.watch(authRepositoryProvider);
+  return repository.getAccountProfiles(uid);
 }
 
 //AUTH CONTROLLER

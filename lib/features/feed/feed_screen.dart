@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pets_social/core/constants/constants.dart';
+import 'package:pets_social/core/providers/firebase_providers.dart';
 import 'package:pets_social/core/utils/extensions.dart';
 import 'package:pets_social/core/utils/language.g.dart';
 import 'package:pets_social/core/utils/utils.dart';
@@ -21,6 +22,7 @@ import 'package:pets_social/features/post/controller/post_controller.dart';
 import 'package:pets_social/features/profile/controller/profile_controller.dart';
 import 'package:pets_social/features/tag/controller/tag_controller.dart';
 import 'package:pets_social/features/tag/widgets/tag_textfield.dart';
+import 'package:pets_social/models/account.dart';
 import 'package:pets_social/models/post.dart';
 import 'package:pets_social/router.dart';
 import 'package:pets_social/models/profile.dart';
@@ -139,7 +141,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   //PROFILE LIST FOR DRAWER
   Widget _buildProfileList() {
-    final accountProfiles = ref.watch(getAccountProfilesProvider);
+    final FirebaseAuth auth = ref.watch(authProvider);
+    final accountProfiles = ref.watch(getAccountProfilesProvider(auth.currentUser!.uid));
     final ThemeData theme = Theme.of(context);
 
     return accountProfiles.when(
@@ -158,25 +161,25 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   //PROFILE LIST ITEM FOR DRAWER
   Widget _buildProfileListItem(DocumentSnapshot document) {
     final ThemeData theme = Theme.of(context);
-    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+    ModelProfile profileIndex = ModelProfile.fromSnap(document);
 
     return ListTile(
       leading: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2),
+          border: Border.all(color: theme.colorScheme.primary, width: 2),
         ),
         child: CircleAvatar(
           radius: 20,
-          backgroundImage: NetworkImage(data['photoUrl'] ?? ""),
+          backgroundImage: NetworkImage(profileIndex.photoUrl ?? ""),
         ),
       ),
-      title: Text(data['username']),
-      selected: ref.read(userProvider)?.profileUid == data['profileUid'],
+      title: Text(profileIndex.username),
+      selected: ref.read(userProvider)?.profileUid == profileIndex.profileUid,
       selectedTileColor: theme.colorScheme.secondary,
       onTap: () {
         setState(() {
-          ref.read(userProvider.notifier).getProfileDetails(profileUid: data['profileUid']);
+          ref.read(userProvider.notifier).getProfileDetails(profileUid: profileIndex.profileUid);
         });
         Navigator.of(context).pop();
       },

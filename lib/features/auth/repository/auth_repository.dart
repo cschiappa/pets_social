@@ -38,6 +38,12 @@ class AuthRepository {
     return ModelAccount.fromSnap(documentSnapshot);
   }
 
+  //GET PROFILES FROM CURRENT USER
+  Stream<QuerySnapshot<Map<String, dynamic>>> getAccountProfiles(String uid) {
+    final String userPath = FirestorePath.user(uid);
+    return _firestore.doc(userPath).collection('profiles').snapshots();
+  }
+
   //SIGN UP
   Future<void> signUp({
     required String email,

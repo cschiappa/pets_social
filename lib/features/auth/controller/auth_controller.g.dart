@@ -79,6 +79,163 @@ final isEmailVerifiedProvider = Provider<bool?>.internal(
 );
 
 typedef IsEmailVerifiedRef = ProviderRef<bool?>;
+String _$getAccountProfilesHash() =>
+    r'2705b4014e3b3917b793b6779d7c1ce849bef7f4';
+
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
+
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+}
+
+/// See also [getAccountProfiles].
+@ProviderFor(getAccountProfiles)
+const getAccountProfilesProvider = GetAccountProfilesFamily();
+
+/// See also [getAccountProfiles].
+class GetAccountProfilesFamily
+    extends Family<AsyncValue<QuerySnapshot<Map<String, dynamic>>>> {
+  /// See also [getAccountProfiles].
+  const GetAccountProfilesFamily();
+
+  /// See also [getAccountProfiles].
+  GetAccountProfilesProvider call(
+    String uid,
+  ) {
+    return GetAccountProfilesProvider(
+      uid,
+    );
+  }
+
+  @override
+  GetAccountProfilesProvider getProviderOverride(
+    covariant GetAccountProfilesProvider provider,
+  ) {
+    return call(
+      provider.uid,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getAccountProfilesProvider';
+}
+
+/// See also [getAccountProfiles].
+class GetAccountProfilesProvider
+    extends AutoDisposeStreamProvider<QuerySnapshot<Map<String, dynamic>>> {
+  /// See also [getAccountProfiles].
+  GetAccountProfilesProvider(
+    String uid,
+  ) : this._internal(
+          (ref) => getAccountProfiles(
+            ref as GetAccountProfilesRef,
+            uid,
+          ),
+          from: getAccountProfilesProvider,
+          name: r'getAccountProfilesProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getAccountProfilesHash,
+          dependencies: GetAccountProfilesFamily._dependencies,
+          allTransitiveDependencies:
+              GetAccountProfilesFamily._allTransitiveDependencies,
+          uid: uid,
+        );
+
+  GetAccountProfilesProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.uid,
+  }) : super.internal();
+
+  final String uid;
+
+  @override
+  Override overrideWith(
+    Stream<QuerySnapshot<Map<String, dynamic>>> Function(
+            GetAccountProfilesRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetAccountProfilesProvider._internal(
+        (ref) => create(ref as GetAccountProfilesRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        uid: uid,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<QuerySnapshot<Map<String, dynamic>>>
+      createElement() {
+    return _GetAccountProfilesProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetAccountProfilesProvider && other.uid == uid;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, uid.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin GetAccountProfilesRef
+    on AutoDisposeStreamProviderRef<QuerySnapshot<Map<String, dynamic>>> {
+  /// The parameter `uid` of this provider.
+  String get uid;
+}
+
+class _GetAccountProfilesProviderElement
+    extends AutoDisposeStreamProviderElement<
+        QuerySnapshot<Map<String, dynamic>>> with GetAccountProfilesRef {
+  _GetAccountProfilesProviderElement(super.provider);
+
+  @override
+  String get uid => (origin as GetAccountProfilesProvider).uid;
+}
+
 String _$authControllerHash() => r'4dd12ea3530041ed3344ee13b7b86cc63d484661';
 
 /// See also [AuthController].

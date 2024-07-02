@@ -78,7 +78,6 @@ class _PostCardState extends ConsumerState<PostCard> {
     final AsyncValue<void> state = ref.watch(postControllerProvider);
 
     final prizes = ref.watch(getPrizesProvider);
-    final prizesFromPost = ref.watch(getPrizesFromPostProvider(widget.post.postId));
 
     return prizes.when(
         error: (error, stackTrace) => Text('Error: $error'),
@@ -180,6 +179,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                 GestureDetector(
                                   onTap: () {
                                     String profileUid = widget.post.profileUid;
+                                    String userId = widget.post.uid;
                                     profileUid == profile.profileUid
                                         ? context.goNamed(
                                             AppRouter.profileScreen.name,
@@ -188,6 +188,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                             AppRouter.navigateToProfile.name,
                                             pathParameters: {
                                               'profileUid': profileUid,
+                                              'userId': userId,
                                             },
                                           );
                                   },
@@ -216,6 +217,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                   child: GestureDetector(
                                     onTap: () {
                                       String profileUid = widget.post.profileUid;
+                                      String userId = widget.post.uid;
 
                                       profileUid == profile.profileUid
                                           ? context.goNamed(
@@ -225,6 +227,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                                               AppRouter.navigateToProfile.name,
                                               pathParameters: {
                                                 'profileUid': profileUid,
+                                                'userId': userId,
                                               },
                                             );
                                     },
@@ -476,17 +479,10 @@ class _PostCardState extends ConsumerState<PostCard> {
                       const SizedBox(
                         height: 8,
                       ),
-                      prizesFromPost.when(
-                          error: (error, stackTrace) => Text('Error: $error'),
-                          loading: () => const LinearProgressIndicator(),
-                          data: (prizesFromPost) {
-                            return PrizesList(
-                              prizes: prizesFromPost,
-                              profileUid: profile.profileUid,
-                              postId: widget.post.postId,
-                            );
-                          }),
-
+                      PrizesList(
+                        profileUid: profile.profileUid,
+                        postId: widget.post.postId,
+                      ),
                       //USERNAME
                       Text(
                         profileFromPost == null ? "" : profileFromPost.username,
